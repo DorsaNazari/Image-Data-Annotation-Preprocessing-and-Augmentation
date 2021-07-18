@@ -60,6 +60,6 @@ cv2.destroyAllWindows()
 # test      of       label()
 # select a rectangle, press 'l' and then enter your text to label
 labeled = label(img1)
-cv2.imshow("labeled", labeled)
+cv2.imshow("labeled", labeled[0])
 cv2.waitKey()
 cv2.destroyAllWindows()

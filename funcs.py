@@ -138,4 +138,4 @@ def label(image, save=False):
             (255, 0, 255),
             2,
         )
-        return image
+        return [image, ref_point, x, y, text]
