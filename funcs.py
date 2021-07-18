@@ -1,3 +1,4 @@
+from numpy.lib.type_check import imag
 from image import Image
 import glob
 import cv2
@@ -27,115 +28,142 @@ def allImagesInThisDirectory(directory):
 
 
 # now let's initialize the list of reference point
-ref_point = []
-crop = False
+cropping = False
+x_start, y_start, x_end, y_end = 0, 0, 0, 0
+croped = None
 
 
 def eazyCrop(image):
-    def shape_selection(event, x, y, flags, param):
+    def mouse_crop(event, x, y, flags, param):
         # grab references to the global variables
-        global ref_point, crop
+        global x_start, y_start, x_end, y_end, cropping, croped
 
-        # if the left mouse button was clicked, record the starting
-        # (x, y) coordinates and indicate that cropping is being performed
+        # if the left mouse button was DOWN, start RECORDING
+        # (x, y) coordinates and indicate that cropping is being
         if event == cv2.EVENT_LBUTTONDOWN:
-            ref_point = [(x, y)]
+            x_start, y_start, x_end, y_end = x, y, x, y
+            cropping = True
 
-        # check to see if the left mouse button was released
+        # Mouse is Moving
+        elif event == cv2.EVENT_MOUSEMOVE:
+            if cropping == True:
+                x_end, y_end = x, y
+
+        # if the left mouse button was released
         elif event == cv2.EVENT_LBUTTONUP:
-            # record the ending (x, y) coordinates and indicate that
-            # the cropping operation is finished
-            ref_point.append((x, y))
-
-            # draw a rectangle around the region of interest
-            cv2.rectangle(image, ref_point[0], ref_point[1], (255, 0, 255), 2)
-            cv2.imshow("image", image)
+            # record the ending (x, y) coordinates
+            x_end, y_end = x, y
+            cropping = False  # cropping is finished
+            refPoint = [(x_start, y_start), (x_end, y_end)]
+            cv2.rectangle(image, (x_start, y_start), (x_end, y_end), (255, 0, 255), 1)
+            if len(refPoint) == 2:  # when two points were found
+                croped = image[
+                    min(refPoint[0][1], refPoint[1][1])
+                    + 1 : max(refPoint[0][1], refPoint[1][1]),
+                    min(refPoint[0][0], refPoint[1][0])
+                    + 1 : max(refPoint[0][0], refPoint[1][0]),
+                ]
 
     # load the image, clone it, and setup the mouse callback function
-    clone = image.copy()
+    original = image.copy()
     image = image.copy()
+    clone = image.copy()
     cv2.namedWindow("image")
-    cv2.setMouseCallback("image", shape_selection)
+    cv2.setMouseCallback("image", mouse_crop)
 
     # keep looping until the 'q' key is pressed
     while True:
         # display the image and wait for a keypress
-        cv2.imshow("image", image)
+        clone = image.copy()
+        if not cropping:
+            cv2.imshow("image", image)
+        elif cropping:
+            cv2.rectangle(clone, (x_start, y_start), (x_end, y_end), (255, 0, 255), 2)
+            cv2.imshow("image", clone)
+
         key = cv2.waitKey(1) & 0xFF
 
         # press 'r' to reset the window
         if key == ord("r"):
-            image = clone.copy()
+            image = original.copy()
 
         # if the 'c' key is pressed, break from the loop
         elif key == ord("c"):
-            break
-
-    if len(ref_point) == 2:
-        crop_img = clone[
-            min(ref_point[0][1], ref_point[1][1]) : max(
-                ref_point[0][1], ref_point[1][1]
-            ),
-            min(ref_point[0][0], ref_point[1][0]) : max(
-                ref_point[0][0], ref_point[1][0]
-            ),
-        ]
-        return crop_img
+            return croped
 
 
-def label(image, save=False):
-    def shape_selection(event, x, y, flags, param):
+ref_point = []
+total_texts = []
+
+
+def label(image):
+    original = image.copy()
+
+    def mouse_crop(event, x, y, flags, param):
         # grab references to the global variables
-        global ref_point, crop
+        global total_texts, x_start, y_start, x_end, y_end, cropping, croped, ref_point
 
-        # if the left mouse button was clicked, record the starting
-        # (x, y) coordinates and indicate that cropping is being performed
+        # if the left mouse button was DOWN, start RECORDING
+        # (x, y) coordinates and indicate that cropping is being
         if event == cv2.EVENT_LBUTTONDOWN:
-            ref_point = [(x, y)]
+            x_start, y_start, x_end, y_end = x, y, x, y
+            cropping = True
 
-        # check to see if the left mouse button was released
+        # Mouse is Moving
+        elif event == cv2.EVENT_MOUSEMOVE:
+            if cropping == True:
+                x_end, y_end = x, y
+
+        # if the left mouse button was released
         elif event == cv2.EVENT_LBUTTONUP:
-            # record the ending (x, y) coordinates and indicate that
-            # the cropping operation is finished
-            ref_point.append((x, y))
+            # record the ending (x, y) coordinates
+            x_end, y_end = x, y
+            cropping = False  # cropping is finished
+            refPoint = [(x_start, y_start), (x_end, y_end)]
+            cv2.rectangle(image, (x_start, y_start), (x_end, y_end), (255, 0, 255), 1)
+            if len(refPoint) == 2:
+                x = min(refPoint[0][0], refPoint[1][0]) + 1
+                y = min(refPoint[0][1], refPoint[1][1]) + 15
+                text = input("Please enter the text:")
+                total_texts.append(text)
+                cv2.putText(
+                    image,
+                    text,
+                    (x, y),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (255, 0, 120),
+                    2,
+                )
+                ref_point.append(refPoint)
 
-            # draw a rectangle around the region of interest
-            cv2.rectangle(image, ref_point[0], ref_point[1], (255, 0, 255), 2)
-            cv2.imshow("image", image)
-
+    # grab references to the global variables
+    global total_texts, ref_point
+    ref_point.clear()
+    total_texts.clear()
     # load the image, clone it, and setup the mouse callback function
     clone = image.copy()
-    if save == False:
-        image = image.copy()
     cv2.namedWindow("image")
-    cv2.setMouseCallback("image", shape_selection)
+    cv2.setMouseCallback("image", mouse_crop)
 
-    # keep looping until the 'q' key is pressed
     while True:
         # display the image and wait for a keypress
-        cv2.imshow("image", image)
-        key = cv2.waitKey(1) & 0xFF
+        clone = image.copy()
+        if not cropping:
+            cv2.imshow("image", image)
+        elif cropping:
+            cv2.rectangle(clone, (x_start, y_start), (x_end, y_end), (255, 0, 255), 2)
+            cv2.imshow("image", clone)
 
+        key = cv2.waitKey(1) & 0xFF
         # press 'r' to reset the window
         if key == ord("r"):
-            image = clone.copy()
+            image = original.copy()
+            ref_point.clear()
+            total_texts.clear()
 
-        # if the 'l' key is pressed, break from the loop
-        elif key == ord("l"):
-            break
-
-    if len(ref_point) == 2:
-        x = (ref_point[0][0] + ref_point[1][0]) // 2
-        y = (ref_point[0][1] + ref_point[1][1]) // 2
-        print("Please enter the text:")
-        text = input()
-        cv2.putText(
-            image,
-            text,
-            (x, y),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (255, 0, 255),
-            2,
-        )
-        return [image, ref_point, x, y, text]
+        # if the 'e' key is pressed, break from the loop
+        elif key == ord("e"):
+            image = original.copy()
+            cv2.destroyAllWindows()
+            return [clone, ref_point, total_texts]
