@@ -5,6 +5,7 @@ from PyQt5.QtGui import QColor, QFont, QStandardItemModel ,QStandardItem
 import numpy as np
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QMainWindow, QApplication, QVBoxLayout,QDialog,QTreeWidgetItem,QTreeView
 from PyQt5 import uic, QtCore,QtWidgets
+from PyQt5.QtCore import Qt, QRect
 from PyQt5.Qt import QStandardItemModel
 import matplotlib
 matplotlib.use("Qt5Agg")
@@ -45,23 +46,88 @@ class MainWindow(QMainWindow, my_form_main):
         ##remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setStyleSheet("border : 10px;")
-        
+        self.resize(700,450)        
 
         ##tree
         treeView = QTreeView()
         treeView.setHeaderHidden(True)
+        treeView.setAnimated(True)
+        treeView.setIndentation(100)
+        # treeView.setGeometry(QRect(0, 0, 882, 346))
+        treeView.setStyleSheet(("QTreeView {    \n"
+    "    background-color: rgb(39, 44, 54);\n"
+    "    padding: 10px;\n"
+    "    border-radius: 15px;\n"
+    "    gridline-color: rgb(44, 49, 60);\n"
+    "    border-bottom: 1px solid rgb(44, 49, 60);\n"
+    "}\n"
+    "QTreeView::item{\n"
+    "    border-color: rgb(44, 49, 60);\n"
+    "    padding-left: 5px;\n"
+    "    padding-right: 5px;\n"
+    "    gridline-color: rgb(44, 49, 60);\n"
+    "}\n"
+    "QTreeView::item:selected{\n"
+    "    background-color: rgb(85, 170, 255);\n"
+    "}\n"
+    "QScrollBar:horizontal {\n"
+    "    border: none;\n"
+    "    background: rgb(52, 59, 72);\n"
+    "    height: 14px;\n"
+    "    margin: 0px 21px 0 21px;\n"
+    "    border-radius: 0px;\n"
+    "}\n"
+    " QScrollBar:vertical {\n"
+    "    border: none;\n"
+    "    background: rgb(52, 59, 72);\n"
+    "    width: 14px;\n"
+    "    margin: 21px 0 21px 0;\n"
+    "    border-radius: 0px;\n"
+    " }\n"
+    "QHeaderView::section{\n"
+    "    Background-color: rgb(39, 44, 54);\n"
+    "    max-width: 30px;\n"
+    "    border: 1px solid rgb(44, 49, 60);\n"
+    "    border-style: none;\n"
+    "    border-bottom: 1px solid rgb(44, 49, 60);\n"
+    "    border-right: 1px solid rgb(44, 49, 60);\n"
+    "}\n"
+    "QTreeView::horizontalHeader {    \n"
+    "    background-color: rgb(81, 255, 0);\n"
+    "}\n"
+    "QHeaderView::section:horizontal\n"
+    "{\n"
+    "    border: 1px solid rgb(32, 34, 42);\n"
+    "    background-color: rgb(27, 29, 35);\n"
+    "    padding: 3px;\n"
+    "    border-top-left-radius: 20px;\n"
+    "    border-top-right-radius: 20px;\n"
+    "}\n"
+    "QHeaderView::section:vertical\n"
+    "{\n"
+    "    border: 1px solid rgb(44, 49, 60);\n"
+    "}\n"
+    "QTreeView QTreeViewCornerButton::section\n"
+    "{\n"
+    "background-color:red\n"
+    "}\n"
+    ""))
         treeModel = QStandardItemModel()
         rootNode = treeModel.invisibleRootItem()
 
 ##########################################################
+        source_images = StandardItem('Source Images',35,color=QColor(96,100,152),set_bold=True)
+        upload = StandardItem('Upload',25,color=QColor(254,121,199))
+        source_images.appendRow(upload)
 
-        preprocessing = StandardItem('Preprocessing',35,color=QColor(56,58,89),set_bold=True)
+        preprocessing = StandardItem('Preprocessing',35,color=QColor(96,100,152),set_bold=True)
         resize = StandardItem('Resize',25,color=QColor(254,121,199))
+        grayscale = StandardItem('Grayscale',25,color=QColor(254,121,199))
         preprocessing.appendRow(resize)
+        preprocessing.appendRow(grayscale)
 
 
-        augmentation = StandardItem('Augmentation',35,color=QColor(56,58,89),set_bold=True)
+        augmentation = StandardItem('Augmentation',35,color=QColor(96,100,152),set_bold=True)
         flip = StandardItem('Flip',25,color=QColor(254,121,199))
         crop = StandardItem('Crop',25,color=QColor(254,121,199))
         rotation = StandardItem('Rotation',25,color=QColor(254,121,199))
@@ -77,8 +143,20 @@ class MainWindow(QMainWindow, my_form_main):
         augmentation.appendRow(blurring)
         augmentation.appendRow(filtering)
 
+        tran_test_split = StandardItem('Train/Test Split',35,color=QColor(96,100,152),set_bold=True)
+        split = StandardItem('Split',25,color=QColor(254,121,199))
+        tran_test_split.appendRow(split)
+
+        generate = StandardItem('Generate',35,color=QColor(96,100,152),set_bold=True)
+        ready = StandardItem('Ready',25,color=QColor(254,121,199))
+        generate.appendRow(ready)
+
+        rootNode.appendRow(source_images)
         rootNode.appendRow(preprocessing)
         rootNode.appendRow(augmentation)
+        rootNode.appendRow(tran_test_split)
+        rootNode.appendRow(generate)
+
 
         treeView.setModel(treeModel)
         treeView.expandAll()
