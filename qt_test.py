@@ -4,7 +4,7 @@ from typing import Counter
 from PyQt5.QtGui import QColor, QFont, QStandardItemModel ,QStandardItem 
 import numpy as np
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QMainWindow, QApplication, QVBoxLayout,QDialog,QTreeWidgetItem,QTreeView
-from PyQt5 import uic, QtCore,QtWidgets
+from PyQt5 import uic, QtCore,QtWidgets,QtGui
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.Qt import QStandardItemModel
 import matplotlib
@@ -13,7 +13,6 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from time import sleep
-import plot_thread as pt
 from image import Image
 from funcs import allImagesInThisDirectory, eazyCrop, label
 import cv2
@@ -33,10 +32,21 @@ class FlipWindow(QMainWindow, my_form_flip):
         super(FlipWindow,self).__init__()
         self.setupUi(self)
         self.setWindowTitle('Flip')
-        ##remove title bar
-        # self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-        # self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        # self.resize(900,700)
 
+        label = self.label_original_image
+        pixmap = QtGui.QPixmap("1.jpg")
+        label.setPixmap(pixmap)
+        label.show()
+
+        self.checkBox_h.stateChanged.connect(self.state_changed)
+        self.checkBox_v.stateChanged.connect(self.state_changed)
+
+    def state_changed(self, int):
+        if self.checkBox_h.isChecked():
+            print(int)
+        if self.checkBox_v.isChecked():
+            print(int)
 
 
 ##making treeview pretty
@@ -59,7 +69,7 @@ class MainWindow(QMainWindow, my_form_main):
         ##remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.resize(700,450)        
+        self.resize(700,500)        
 
         ##tree
         treeView = QTreeView()
@@ -132,12 +142,15 @@ class MainWindow(QMainWindow, my_form_main):
         upload = StandardItem('Upload',25,color=QColor(254,121,199))
         source_images.appendRow(upload)
 
+        annotate = StandardItem('Annotate',35,color=QColor(96,100,152),set_bold=True)
+        tagging = StandardItem('Tagging',25,color=QColor(254,121,199))
+        annotate.appendRow(tagging)
+
         preprocessing = StandardItem('Preprocessing',35,color=QColor(96,100,152),set_bold=True)
         resize = StandardItem('Resize',25,color=QColor(254,121,199))
         grayscale = StandardItem('Grayscale',25,color=QColor(254,121,199))
         preprocessing.appendRow(resize)
         preprocessing.appendRow(grayscale)
-
 
         augmentation = StandardItem('Augmentation',35,color=QColor(96,100,152),set_bold=True)
         flip = StandardItem('Flip',25,color=QColor(254,121,199))
@@ -164,6 +177,7 @@ class MainWindow(QMainWindow, my_form_main):
         generate.appendRow(ready)
 
         rootNode.appendRow(source_images)
+        rootNode.appendRow(annotate)
         rootNode.appendRow(preprocessing)
         rootNode.appendRow(augmentation)
         rootNode.appendRow(tran_test_split)
@@ -172,6 +186,7 @@ class MainWindow(QMainWindow, my_form_main):
 
         treeView.setModel(treeModel)
         treeView.expandAll()
+
         treeView.doubleClicked.connect(self.action)
 
         self.setCentralWidget(treeView)
