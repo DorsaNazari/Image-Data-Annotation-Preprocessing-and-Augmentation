@@ -22,9 +22,22 @@ import cv2
 
 my_form_SplashScreen = uic.loadUiType(os.path.join(os.getcwd(), "first.ui"))[0]
 my_form_main = uic.loadUiType(os.path.join(os.getcwd(), "main.ui"))[0]
+my_form_flip = uic.loadUiType(os.path.join(os.getcwd(), "flipWindow.ui"))[0]
+
 
 ##global
 Counter = 0
+##flip window
+class FlipWindow(QMainWindow, my_form_flip):
+    def __init__(self):
+        super(FlipWindow,self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle('Flip')
+        ##remove title bar
+        # self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        # self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+
 
 ##making treeview pretty
 class StandardItem(QStandardItem,my_form_main):
@@ -114,8 +127,7 @@ class MainWindow(QMainWindow, my_form_main):
     ""))
         treeModel = QStandardItemModel()
         rootNode = treeModel.invisibleRootItem()
-
-##########################################################
+ #########################################################
         source_images = StandardItem('Source Images',35,color=QColor(96,100,152),set_bold=True)
         upload = StandardItem('Upload',25,color=QColor(254,121,199))
         source_images.appendRow(upload)
@@ -165,19 +177,18 @@ class MainWindow(QMainWindow, my_form_main):
         self.setCentralWidget(treeView)
     
     def action (self,val):
-        imgObject = Image("test.jpeg")
+        # imgObject = Image("test.jpeg")
         if val.data() == "Flip":
-            img = cv2.flip(imgObject.img, 0)
-            cv2.imshow("original", img)
-            cv2.waitKey()
-            cv2.destroyAllWindows()
+            print(val.data())
+            self.flip = FlipWindow()
+            self.flip.show()
+            # img = cv2.flip(imgObject.img, 1)
+            # cv2.imshow("original", img)
+            # cv2.waitKey()
+            # cv2.destroyAllWindows()
 
 
             
-
-
-
-
 ## splash screen
 class SplashScreen(QMainWindow, my_form_SplashScreen):
     def __init__(self):
