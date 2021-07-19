@@ -48,9 +48,6 @@
        <property name="text">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap>1.jpg</pixmap>
-       </property>
       </widget>
       <widget class="QCheckBox" name="checkBox">
        <property name="geometry">
