@@ -45,6 +45,7 @@ Counter = 0
 
 #Uploading
 class UploadWindow(QMainWindow, my_form_upload):
+    _count = 1
     def __init__(self):
         super(UploadWindow, self).__init__()
         self.setupUi(self)
@@ -53,10 +54,13 @@ class UploadWindow(QMainWindow, my_form_upload):
 
 
     def browseImages(self):
+        
         fName = QFileDialog.getOpenFileName(self,'Select Images', '.','image files(*.png *.tif *.tiff *.jp2 *.jpe *.jpg *.jpeg *.ras *.ppm *.pbm *.pgm)')
         imagePath = fName[0]
+        UploadWindow._count +=1
+        name = str(UploadWindow._count)
         pixmap = QPixmap(imagePath)
-        pixmap.save("new.jpg")
+        pixmap.save("image"+name+".jpg")
         
         #self.fileName.setText(fName[0])
         
