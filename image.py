@@ -62,7 +62,7 @@ class Image:
 
     def addnoise(self, mode, x=0.05, save=False):
         if mode == "gaussian" or mode == "speckle":
-            gimg = random_noise(self.img, mode=mode, var=x)
+            gimg = random_noise(self.img, mode=mode, var=x * 3)
         elif mode == "s&p" or mode == "pepper" or mode == "salt":
             gimg = random_noise(self.img, mode=mode, amount=x)
         elif mode == "poisson":
