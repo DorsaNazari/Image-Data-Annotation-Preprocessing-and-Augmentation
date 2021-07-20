@@ -38,9 +38,30 @@ my_form_rotation = uic.loadUiType(os.path.join(os.getcwd(), "rotationWindow.ui")
 my_form_noise = uic.loadUiType(os.path.join(os.getcwd(), "noiseWindow.ui"))[0]
 my_form_blurring = uic.loadUiType(os.path.join(os.getcwd(), "blurringWindow.ui"))[0]
 my_form_crop = uic.loadUiType(os.path.join(os.getcwd(), "cropWindow.ui"))[0]
+my_form_upload = uic.loadUiType(os.path.join(os.getcwd(), "uploadWindow.ui"))[0]
 
 ##global
 Counter = 0
+
+#Uploading
+class UploadWindow(QMainWindow, my_form_upload):
+    def __init__(self):
+        super(UploadWindow, self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle("Upload")
+        self.browse.clicked.connect(self.browseImages)
+
+
+    def browseImages(self):
+        fName = QFileDialog.getOpenFileName(self,'Select Images', '.','image files(*.png *.tif *.tiff *.jp2 *.jpe *.jpg *.jpeg *.ras *.ppm *.pbm *.pgm)')
+        imagePath = fName[0]
+        pixmap = QPixmap(imagePath)
+        pixmap.save("new.jpg")
+        
+        #self.fileName.setText(fName[0])
+        
+
+
 ##flip window
 class FlipWindow(QMainWindow, my_form_flip):
     def __init__(self):
@@ -102,12 +123,12 @@ class CropWindow(QMainWindow, my_form_crop):
         
 
 #this function will load user selected image
-    #this function will take image and resize it
+#this function will take image and resize it
     # def setPhoto(self,image):
     #     self.filename = QFileDialog.getOpenFileName(filter="Image(*.*)")
-        # self.image = cv2.imread(self.filename)
-        # self.setPhoto(self.image)
-        # self.tmp = image
+    #     self.image = cv2.imread(self.filename)
+    #     self.setPhoto(self.image)
+    #     self.tmp = image
     #     image = imutils.resize(image,width=640)
     #     fram = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     #     image = QImage(frame,frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
@@ -419,6 +440,10 @@ class MainWindow(QMainWindow, my_form_main):
 
     def action(self, val):
         # imgObject = Image("test.jpeg")
+        if val.data() == "Upload":
+            print(val.data())
+            self.flip = UploadWindow()
+            self.flip.show()
         if val.data() == "Flip":
             print(val.data())
             self.flip = FlipWindow()
