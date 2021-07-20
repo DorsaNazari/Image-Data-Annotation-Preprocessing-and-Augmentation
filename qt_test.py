@@ -1,9 +1,10 @@
 import os
 import sys
 from typing import Counter
-from PyQt5.QtGui import QColor, QFont, QStandardItemModel, QStandardItem, QIcon, QPixmap
+from PyQt5.QtGui import QColor, QFont, QStandardItemModel, QStandardItem, QIcon, QPixmap,QImage
 import numpy as np
 from PyQt5.QtWidgets import (
+    QFileDialog,
     QGraphicsDropShadowEffect,
     QMainWindow,
     QApplication,
@@ -24,7 +25,9 @@ from matplotlib.figure import Figure
 from time import sleep
 from image import Image
 from funcs import allImagesInThisDirectory, eazyCrop, label
-import cv2
+import cv2 
+import random
+from random import seed
 
 
 my_form_SplashScreen = uic.loadUiType(os.path.join(os.getcwd(), "first.ui"))[0]
@@ -34,6 +37,7 @@ my_form_brightness = uic.loadUiType(os.path.join(os.getcwd(), "brightnessWindow.
 my_form_rotation = uic.loadUiType(os.path.join(os.getcwd(), "rotationWindow.ui"))[0]
 my_form_noise = uic.loadUiType(os.path.join(os.getcwd(), "noiseWindow.ui"))[0]
 my_form_blurring = uic.loadUiType(os.path.join(os.getcwd(), "blurringWindow.ui"))[0]
+my_form_crop = uic.loadUiType(os.path.join(os.getcwd(), "cropWindow.ui"))[0]
 
 ##global
 Counter = 0
@@ -59,6 +63,57 @@ class FlipWindow(QMainWindow, my_form_flip):
         if self.checkBox_v.isChecked():
             print(int)
 
+
+# crop window
+class CropWindow(QMainWindow, my_form_crop):
+    def __init__(self):
+        super(CropWindow, self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle("Crop")
+        self.pushButton.clicked.connect(self.setPoint)
+        #self.filename
+
+    def setPoint(self):
+        im = cv2.imread('2.jpg')
+        h, w, c = im.shape
+        Snum_x = random.randint(0,w-200)
+        Snum_y = random.randint(0,h-200)
+        Enum_x = random.randint(Snum_x+200,w)
+        Enum_y = random.randint(Snum_y+200,h)
+        num = random.random()
+        self.beginPoint.setText(f"{Snum_x} , {Snum_y}")
+        self.endPoint.setText(f"{Enum_x} , {Enum_y}")
+        imgObject = Image("2.jpg")
+        img = imgObject.crop([Snum_y,Enum_y], [Snum_x,Enum_x],True)
+        cv2.imwrite("uic.jpg", img)
+        pixmap = QPixmap("uic.jpg")
+        self.label.setPixmap(pixmap)
+
+
+
+
+        
+
+    def cropping(self):
+        pass
+        
+    
+        
+        
+
+#this function will load user selected image
+    #this function will take image and resize it
+    # def setPhoto(self,image):
+    #     self.filename = QFileDialog.getOpenFileName(filter="Image(*.*)")
+        # self.image = cv2.imread(self.filename)
+        # self.setPhoto(self.image)
+        # self.tmp = image
+    #     image = imutils.resize(image,width=640)
+    #     fram = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    #     image = QImage(frame,frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
+    #     self.label.setPixmap(QtGui.QPixmap.fromImage(image))
+
+        
 
 # brightness window
 class BrightnessWindow(QMainWindow, my_form_brightness):
@@ -90,6 +145,7 @@ class RotationWindow(QMainWindow, my_form_rotation):
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
+        
     def state_changed(self, int):
         imgObject = Image("2.jpg")
         img = imgObject.rotate(-int)
@@ -371,6 +427,10 @@ class MainWindow(QMainWindow, my_form_main):
             # cv2.imshow("original", img)
             # cv2.waitKey()
             # cv2.destroyAllWindows()
+        if val.data() == "Crop":
+            print(val.data())
+            self.crop = CropWindow()
+            self.crop.show()
         if val.data() == "Brightness":
             print(val.data())
             self.brightness = BrightnessWindow()
