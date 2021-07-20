@@ -71,7 +71,10 @@ class CropWindow(QMainWindow, my_form_crop):
         self.setupUi(self)
         self.setWindowTitle("Crop")
         self.pushButton.clicked.connect(self.setPoint)
+        self.beginPoint.textEdited.connect(self.setBegin)
         #self.filename
+    def setBegin(self,val):
+        x_start = val
 
     def setPoint(self):
         im = cv2.imread('2.jpg')
@@ -90,9 +93,6 @@ class CropWindow(QMainWindow, my_form_crop):
         self.label.setPixmap(pixmap)
 
 
-
-
-        
 
     def cropping(self):
         pass
