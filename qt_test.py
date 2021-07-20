@@ -1,7 +1,7 @@
 import os
 import sys
 from typing import Counter
-from PyQt5.QtGui import QColor, QFont, QStandardItemModel, QStandardItem, QIcon, QPixmap,QImage
+from PyQt5.QtGui import QColor, QFont, QStandardItemModel, QStandardItem, QIcon, QPixmap
 import numpy as np
 from PyQt5.QtWidgets import (
     QFileDialog,
@@ -25,9 +25,7 @@ from matplotlib.figure import Figure
 from time import sleep
 from image import Image
 from funcs import allImagesInThisDirectory, eazyCrop, label
-import cv2 
-import random
-from random import seed
+import cv2
 
 
 my_form_SplashScreen = uic.loadUiType(os.path.join(os.getcwd(), "first.ui"))[0]
@@ -42,28 +40,31 @@ my_form_upload = uic.loadUiType(os.path.join(os.getcwd(), "uploadWindow.ui"))[0]
 
 ##global
 Counter = 0
-
-#Uploading
+# Uploading
 class UploadWindow(QMainWindow, my_form_upload):
     _count = 1
+
     def __init__(self):
         super(UploadWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Upload")
         self.browse.clicked.connect(self.browseImages)
 
-
     def browseImages(self):
-        
-        fName = QFileDialog.getOpenFileName(self,'Select Images', '.','image files(*.png *.tif *.tiff *.jp2 *.jpe *.jpg *.jpeg *.ras *.ppm *.pbm *.pgm)')
+
+        fName = QFileDialog.getOpenFileName(
+            self,
+            "Select Images",
+            ".",
+            "image files(*.png *.tif *.tiff *.jp2 *.jpe *.jpg *.jpeg *.ras *.ppm *.pbm *.pgm)",
+        )
         imagePath = fName[0]
-        UploadWindow._count +=1
+        UploadWindow._count += 1
         name = str(UploadWindow._count)
         pixmap = QPixmap(imagePath)
-        pixmap.save("image"+name+".jpg")
-        
-        #self.fileName.setText(fName[0])
-        
+        pixmap.save("image" + name + ".jpg")
+
+        # self.fileName.setText(fName[0])
 
 
 ##flip window
@@ -89,57 +90,6 @@ class FlipWindow(QMainWindow, my_form_flip):
             print(int)
 
 
-# crop window
-class CropWindow(QMainWindow, my_form_crop):
-    def __init__(self):
-        super(CropWindow, self).__init__()
-        self.setupUi(self)
-        self.setWindowTitle("Crop")
-        self.pushButton.clicked.connect(self.setPoint)
-        self.beginPoint.textEdited.connect(self.setBegin)
-        #self.filename
-    def setBegin(self,val):
-        x_start = val
-
-    def setPoint(self):
-        im = cv2.imread('2.jpg')
-        h, w, c = im.shape
-        Snum_x = random.randint(0,w-200)
-        Snum_y = random.randint(0,h-200)
-        Enum_x = random.randint(Snum_x+200,w)
-        Enum_y = random.randint(Snum_y+200,h)
-        num = random.random()
-        self.beginPoint.setText(f"{Snum_x} , {Snum_y}")
-        self.endPoint.setText(f"{Enum_x} , {Enum_y}")
-        imgObject = Image("2.jpg")
-        img = imgObject.crop([Snum_y,Enum_y], [Snum_x,Enum_x],True)
-        cv2.imwrite("uic.jpg", img)
-        pixmap = QPixmap("uic.jpg")
-        self.label.setPixmap(pixmap)
-
-
-
-    def cropping(self):
-        pass
-        
-    
-        
-        
-
-#this function will load user selected image
-#this function will take image and resize it
-    # def setPhoto(self,image):
-    #     self.filename = QFileDialog.getOpenFileName(filter="Image(*.*)")
-    #     self.image = cv2.imread(self.filename)
-    #     self.setPhoto(self.image)
-    #     self.tmp = image
-    #     image = imutils.resize(image,width=640)
-    #     fram = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    #     image = QImage(frame,frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
-    #     self.label.setPixmap(QtGui.QPixmap.fromImage(image))
-
-        
-
 # brightness window
 class BrightnessWindow(QMainWindow, my_form_brightness):
     def __init__(self):
@@ -150,6 +100,10 @@ class BrightnessWindow(QMainWindow, my_form_brightness):
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.pushButton_4.clicked.connect(self.exit)
+
+    def exit(self):
+        self.close()
 
     def state_changed(self, int):
         imgObject = Image("2.jpg")
@@ -169,8 +123,11 @@ class RotationWindow(QMainWindow, my_form_rotation):
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.pushButton_7.clicked.connect(self.exit)
 
-        
+    def exit(self):
+        self.close()
+
     def state_changed(self, int):
         imgObject = Image("2.jpg")
         img = imgObject.rotate(-int)
@@ -197,6 +154,10 @@ class NoiseWindow(QMainWindow, my_form_noise):
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.pushButton_7.clicked.connect(self.exit)
+
+    def exit(self):
+        self.close()
 
     def gauss(self):
         self.mode = "gaussian"
@@ -231,7 +192,7 @@ class NoiseWindow(QMainWindow, my_form_noise):
         imgObject = Image("2.jpg")
         img = imgObject.addnoise(self.mode, int / 100)
         cv2.imwrite("ui.jpg", img)
-        pixmap = QPixmap("ui.jpg")
+        pixmap = QtGui.QPixmap("ui.jpg")
         self.label.setPixmap(pixmap)
 
 
@@ -282,6 +243,85 @@ class BlurringWindow(QMainWindow, my_form_blurring):
         cv2.imwrite("ui.jpg", ans)
         pixmap = QPixmap("ui.jpg")
         self.label.setPixmap(pixmap)
+
+
+# crop window
+class CropWindow(QMainWindow, my_form_crop):
+    def __init__(self):
+        super(CropWindow, self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle("crop")
+        self.ref_point = []
+        self.pushButton_4.clicked.connect(self.exit)
+
+        # remove title bar
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        # self.label = QtWidgets.QLabel(self)
+
+    def mousePressEvent(self, event):
+        self.originQPoint = [event.x(), event.y()]
+        self.ref_point.append(self.originQPoint)
+        self.originQPoint = event.pos()
+        self.currentQRubberBand = QtWidgets.QRubberBand(
+            QtWidgets.QRubberBand.Rectangle, self
+        )
+        self.currentQRubberBand.setGeometry(
+            QtCore.QRect(self.originQPoint, QtCore.QSize())
+        )
+        self.currentQRubberBand.show()
+
+    def mouseMoveEvent(self, event):
+        self.currentQRubberBand.setGeometry(
+            QtCore.QRect(self.originQPoint, event.pos()).normalized()
+        )
+
+    def mouseReleaseEvent(self, event):
+        self.endQPoint = [event.x(), event.y()]
+        self.ref_point.append(self.endQPoint)
+        self.currentQRubberBand.hide()
+        currentQRect = self.currentQRubberBand.geometry()
+        self.currentQRubberBand.deleteLater()
+        if (
+            self.ref_point[0][0] == self.ref_point[1][0]
+            or self.ref_point[0][1] == self.ref_point[1][1]
+        ):
+            self.ref_point.clear()
+            return
+        imgObject = Image("2.jpg")
+        image = imgObject.img
+        if self.ref_point[0][1] < 280:
+            self.ref_point[0][1] = 280
+        if self.ref_point[1][1] < 280:
+            self.ref_point[1][1] = 280
+        if self.ref_point[1][1] > 730:
+            self.ref_point[1][1] = 730
+        if self.ref_point[0][1] > 730:
+            self.ref_point[0][1] = 730
+        if self.ref_point[0][0] < 30:
+            self.ref_point[0][0] = 30
+        if self.ref_point[1][0] < 30:
+            self.ref_point[1][0] = 30
+        if self.ref_point[0][0] > 630:
+            self.ref_point[0][0] = 630
+        if self.ref_point[1][0] > 630:
+            self.ref_point[1][0] = 630
+        croped = image[
+            min(self.ref_point[0][1], self.ref_point[1][1])
+            - 280 : max(self.ref_point[0][1], self.ref_point[1][1])
+            - 280,
+            min(self.ref_point[0][0], self.ref_point[1][0])
+            - 30 : max(self.ref_point[0][0], self.ref_point[1][0])
+            - 30,
+        ]
+        cv2.imwrite("ui.jpg", croped)
+        pixmap = QPixmap("ui.jpg")
+        self.label_2.setPixmap(pixmap)
+        self.ref_point.clear()
+
+    def exit(self):
+        self.close()
 
 
 ##making treeview pretty
@@ -443,7 +483,6 @@ class MainWindow(QMainWindow, my_form_main):
         self.setCentralWidget(treeView)
 
     def action(self, val):
-        # imgObject = Image("test.jpeg")
         if val.data() == "Upload":
             print(val.data())
             self.flip = UploadWindow()
@@ -456,10 +495,6 @@ class MainWindow(QMainWindow, my_form_main):
             # cv2.imshow("original", img)
             # cv2.waitKey()
             # cv2.destroyAllWindows()
-        if val.data() == "Crop":
-            print(val.data())
-            self.crop = CropWindow()
-            self.crop.show()
         if val.data() == "Brightness":
             print(val.data())
             self.brightness = BrightnessWindow()
@@ -475,6 +510,10 @@ class MainWindow(QMainWindow, my_form_main):
         if val.data() == "Blurring":
             print(val.data())
             self.blurring = BlurringWindow()
+            self.blurring.show()
+        if val.data() == "Crop":
+            print(val.data())
+            self.blurring = CropWindow()
             self.blurring.show()
 
 
