@@ -41,6 +41,8 @@ my_form_upload = uic.loadUiType(os.path.join(os.getcwd(), "uploadWindow.ui"))[0]
 my_form_tag = uic.loadUiType(os.path.join(os.getcwd(), "taggingWindow.ui"))[0]
 my_form_split = uic.loadUiType(os.path.join(os.getcwd(), "splitWindow.ui"))[0]
 my_form_filtering = uic.loadUiType(os.path.join(os.getcwd(), "filteringWindow.ui"))[0]
+my_form_resize = uic.loadUiType(os.path.join(os.getcwd(), "resizeWindow.ui"))[0]
+
 
 ##global
 Counter = 0
@@ -55,6 +57,10 @@ class UploadWindow(QMainWindow, my_form_upload):
         self.browse.clicked.connect(self.browseImages)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.pushButton_4.clicked.connect(self.exit)
+
+    def exit(self):
+        self.close()
 
     def browseImages(self):
         imagePath = QFileDialog.getExistingDirectory(self, "Select file")
@@ -76,30 +82,107 @@ class UploadWindow(QMainWindow, my_form_upload):
             selectedImage = selectedImage.scaled(240, 180)
             selectedImage.save("1.jpeg")
             selectedImage.save("1.jpg")
-            self.label.setText("successfully uploaded!")
+            self.label.setText("<strong>Successfully Uploaded!</strong>")
 
 
-##flip window
+## flip window
 class FlipWindow(QMainWindow, my_form_flip):
     def __init__(self):
-        super(FlipWindow, self).__init__()
+        super(FlipWindow,self).__init__()
         self.setupUi(self)
-        self.setWindowTitle("Flip")
-        # self.resize(900,700)
+        self.setWindowTitle('Flip')
+        # remove title bar
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-        label = self.label_original_image
-        pixmap = QtGui.QPixmap("1.jpg")
-        label.setPixmap(pixmap)
-        label.show()
+        self.imagename = "1"
+        self.imagename = str(np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1)
+        pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        pixmap = pixmap.scaled(550,350)
+        self.label_original_image.setPixmap(pixmap)
+        self.label_original_image.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.checkBox_h.stateChanged.connect(self.state_changed)
-        self.checkBox_v.stateChanged.connect(self.state_changed)
+        # self.checkBox_h.stateChanged.connect(self.state_changed)
+        # self.checkBox_v.stateChanged.connect(self.state_changed)
+        self.pushButton.clicked.connect(self.state_changed )
+        self.pushButton_4.clicked.connect(self.exit)
+
+    def exit(self):
+        self.close()
 
     def state_changed(self, int):
-        if self.checkBox_h.isChecked():
-            print(int)
+
+        src = cv2.imread("1.jpg")
+        imgObject = Image("./images/image" + self.imagename + ".jpg")
+        image = cv2.resize(imgObject.img, (550, 350))
+        cv2.imwrite("my.jpg", image)
+        src = cv2.imread("my.jpg")
+
+        if not(self.checkBox_h.isChecked() & self.checkBox_v.isChecked()):
+            self.label_fliped_image.setText(" ")
         if self.checkBox_v.isChecked():
-            print(int)
+            img = cv2.flip(src, 0)
+            cv2.imwrite("my.png", img)
+            pixmap = QtGui.QPixmap('my.png')
+            self.label_fliped_image.setPixmap(pixmap)
+            self.label_fliped_image.show()
+        if self.checkBox_h.isChecked():
+            img = cv2.flip(src, 1)
+            cv2.imwrite("my.png", img)
+            pixmap = QtGui.QPixmap('my.png')
+            self.label_fliped_image.setPixmap(pixmap)
+            self.label_fliped_image.show()
+        if self.checkBox_h.isChecked() & self.checkBox_v.isChecked():
+            img = cv2.flip(src, -1)
+            cv2.imwrite("my.png", img)
+            pixmap = QtGui.QPixmap('my.png')
+            self.label_fliped_image.setPixmap(pixmap)
+            self.label_fliped_image.show()
+
+
+## resize window
+class ResizeWindow(QMainWindow, my_form_resize):
+    def __init__(self):
+        super(ResizeWindow,self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle('Resize')
+        # remove title bar
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        self.imagename = "1"
+        self.imagename = str(np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1)
+        pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        pixmap = pixmap.scaled(550,350)
+        self.label_original_image.setPixmap(pixmap)
+        self.label_original_image.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.pushButton.clicked.connect(self.state_changed )
+        self.pushButton_4.clicked.connect(self.exit)
+
+    def exit(self):
+        self.close()
+
+    def state_changed(self, int):
+        h = np.int64(float(self.height.text()))
+        w = np.int64(float(self.width.text()))
+
+        # resize image
+        imgObject = Image("./images/image" + self.imagename + ".jpg")
+        image = cv2.resize(imgObject.img, (550, 350))
+
+        im=cv2.imwrite("my.jpg", image)
+        src = cv2.imread("my.jpg")
+        height = np.int(src.shape[0] * h / 100)
+        width = np.int(src.shape[1] * w / 100)
+        dim = (width, height)
+  
+        img = cv2.resize(src, dim, interpolation = cv2.INTER_AREA)
+        cv2.imwrite("my.png", img)
+        pixmap = QtGui.QPixmap('my.png')
+        self.label_resized_image.setPixmap(pixmap)
+        self.label_resized_image.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_resized_image.show()
 
 
 # brightness window
@@ -755,9 +838,7 @@ class MainWindow(QMainWindow, my_form_main):
             "Preprocessing", 35, color=QColor(96, 100, 152), set_bold=True
         )
         resize = StandardItem("Resize", 25, color=QColor(254, 121, 199))
-        grayscale = StandardItem("Grayscale", 25, color=QColor(254, 121, 199))
         preprocessing.appendRow(resize)
-        preprocessing.appendRow(grayscale)
 
         augmentation = StandardItem(
             "Augmentation", 35, color=QColor(96, 100, 152), set_bold=True
@@ -812,10 +893,10 @@ class MainWindow(QMainWindow, my_form_main):
             print(val.data())
             self.flip = FlipWindow()
             self.flip.show()
-            # img = cv2.flip(imgObject.img, 1)
-            # cv2.imshow("original", img)
-            # cv2.waitKey()
-            # cv2.destroyAllWindows()
+        if val.data() == "Resize":
+            print(val.data())
+            self.flip = ResizeWindow()
+            self.flip.show()
         if val.data() == "Brightness":
             print(val.data())
             self.brightness = BrightnessWindow()
@@ -902,57 +983,5 @@ app = QApplication([])
 w = SplashScreen()
 w.show()
 sys.exit(app.exec_())
-print("hello qt :)")
 
 
-#     self.fig = Figure()
-#     self.ax = self.fig.add_subplot(111)
-#     # frame_on = False
-#     self.canvas = FigureCanvas(self.fig)
-#     self.navi = NavigationToolbar(self.canvas, self)
-
-#     l = QVBoxLayout(self.matplotlib_widget)
-#     l.addWidget(self.navi)
-#     l.addWidget(self.canvas)
-
-#     x = np.linspace(0, 6* np.pi, 1000)
-#     self.line1, = self.ax.plot(x, np.cos(x), 'g',lw=3)
-#     self.ax.text(np.pi,.5,r"$\sin(x)$",fontsize =20)
-
-#     self.thread = None
-
-#     #events
-#     self.ok_pushButton.clicked.connect(self.ok_callback)
-#     self.rand_lineEdit.textChanged.connect(self.func)
-
-# def ok_callback(self):
-#     if self.thread:
-#         return
-#     r = np.random.random()
-#     self.rand_lineEdit.setText(f"num is: {r:.03f}")
-#     print("hello world!! :))")
-#     self.thread = pt.plot_thread(self, r)
-#     self.thread.update_trigger.connect(self.update_plot)
-#     self.thread.stop_trigger.connect(self.stop)
-#     self.thread.start()
-#     self.ok_pushButton.setEnabled(False)
-
-# def update_plot(self, x, y):
-#     self.line1.set_data(x, y)
-#     self.fig.canvas.draw()
-
-# def func(self):
-#     print("test")
-
-# def stop(self):
-#     self.thread = None
-#     self.rand_lineEdit.setText("STOP")
-#     self.ok_pushButton.setEnabled(True)
-
-
-#     self.printtree()
-
-# def printtree(self):
-#     self.treeWidget.setColumnCount(3)
-#     a =QTreeWidgetItem(["preprocessing"])
-#     self.treeWidget.addTopLevelItem(a)
