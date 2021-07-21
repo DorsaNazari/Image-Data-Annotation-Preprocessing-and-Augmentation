@@ -501,7 +501,6 @@ class TaggingWindow(QMainWindow, my_form_tag):
             self.ref_point[0][0] == self.ref_point[1][0]
             or self.ref_point[0][1] == self.ref_point[1][1]
         ):
-            self.ref_point.clear()
             return
         imgObject = Image("./images/image" + self.imagename + ".jpg")
         if os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
