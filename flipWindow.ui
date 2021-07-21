@@ -45,6 +45,9 @@
          <height>361</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(102, 106, 161);</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -125,7 +128,7 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_fliped_image">
        <property name="geometry">
         <rect>
          <x>520</x>
@@ -134,8 +137,11 @@
          <height>361</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(102, 106, 161);</string>
+       </property>
        <property name="text">
-        <string>TextLabel</string>
+        <string/>
        </property>
       </widget>
       <widget class="QLabel" name="label_2">
@@ -181,6 +187,32 @@ color: rgb(165, 167, 255);</string>
        </property>
        <property name="text">
         <string>Apply</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="geometry">
+        <rect>
+         <x>940</x>
+         <y>10</y>
+         <width>20</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(56,58,89);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>exit2.png</normaloff>exit2.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
       </widget>
      </widget>
