@@ -17,6 +17,7 @@ from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.Qt import QStandardItemModel
 import matplotlib
+from numpy.core.defchararray import lower
 
 matplotlib.use("Qt5Agg")
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -37,6 +38,7 @@ my_form_noise = uic.loadUiType(os.path.join(os.getcwd(), "noiseWindow.ui"))[0]
 my_form_blurring = uic.loadUiType(os.path.join(os.getcwd(), "blurringWindow.ui"))[0]
 my_form_crop = uic.loadUiType(os.path.join(os.getcwd(), "cropWindow.ui"))[0]
 my_form_upload = uic.loadUiType(os.path.join(os.getcwd(), "uploadWindow.ui"))[0]
+my_form_filtering = uic.loadUiType(os.path.join(os.getcwd(), "filteringWindow.ui"))[0]
 
 ##global
 Counter = 0
@@ -64,9 +66,11 @@ class UploadWindow(QMainWindow, my_form_upload):
                 UploadWindow._count +=1
                 name = str(UploadWindow._count)
                 pixmap = QPixmap(list_of_images_directory[i])
-                pixmap.save("image"+name+".jpg")
+                pixmap = pixmap.scaled(450, 600)
+                pixmap.save(".\images\image"+name+".jpg")
             selectedImage = QPixmap(list_of_images_directory[l-1])
-            selectedImage.save("selected.jpg")
+            selectedImage = selectedImage.scaled(450, 600)
+            selectedImage.save(".\images\selected.jpg")
             self.label.setText("successfully uploaded!")
         
         
@@ -326,6 +330,79 @@ class CropWindow(QMainWindow, my_form_crop):
 
     def exit(self):
         self.close()
+    
+#filtering
+class FilteringWindow(QMainWindow, my_form_filtering):
+    def __init__(self):
+        super(FilteringWindow, self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle("filtering")
+        self.pushButton.clicked.connect(self.apply_invert)
+       # self.pushButton_2.clicked.connect(self.apply_sepia)
+        self.pushButton_3.clicked.connect(self.destroy)
+        self.pushButton_4.clicked.connect(self.Morphological)
+        self.pushButton_5.clicked.connect(self.openning)
+    
+    def apply_invert(self):
+        imgObject = cv2.imread("1.jpeg")
+        cv2.imwrite("ui.jpg", cv2.bitwise_not(imgObject))
+        pixmap = QPixmap("ui.jpg")
+        self.label_filtering.setPixmap(pixmap)
+    
+    # def apply_sepia(self):
+    #     img = cv2.imread("1.jpeg")
+    #     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    #     normalized_gray = np.array(gray, np.float32)/255
+    #     #solid color
+    #     sepia = np.ones(img.shape)
+    #     sepia[:,:,0] *= 153 #B
+    #     sepia[:,:,1] *= 204 #G
+    #     sepia[:,:,2] *= 255 #R
+    #     #hadamard
+    #     sepia[:,:,0] *= normalized_gray #B
+    #     sepia[:,:,1] *= normalized_gray #G
+    #     sepia[:,:,2] *= normalized_gray #R
+    #     #image = cv2.imread(raw_input('source filename: '))
+    #     return np.array(sepia, np.uint8)
+    #     img = cv2.imread("1.jpeg")
+    #     img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+    #     overlay = (20 , 66, 112)
+    #     cv2.addWeighted(overlay, 0.5, img, 1.0, 2, img)
+    #     img = cv2.cvtColor(img,cv2.COLOR_BGR2BGRA)
+    #     cv2.imwrite("ui.jpg", img)
+    #     pixmap = QPixmap("ui.jpg")
+    #     self.label_filtering.setPixmap(pixmap)
+
+    def destroy(self):
+        img = cv2.imread("1.jpeg")
+        hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+        lower_red = np.array([0,0,0])
+        upper_red = np.array([150,250,250])
+        mask = cv2.inRange(hsv, lower_red, upper_red)
+        res = cv2.bitwise_and(img,img, mask=mask)
+        cv2.imwrite("ui.jpg", res)
+        pixmap = QPixmap("ui.jpg")
+        self.label_filtering.setPixmap(pixmap)
+
+    def  Morphological(self):
+        img = cv2.imread("1.jpeg",0)
+        kernel = np.ones((5,5),np.uint8)
+        gradient = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
+        cv2.imwrite("ui.jpg", gradient)
+        pixmap = QPixmap("ui.jpg")
+        self.label_filtering.setPixmap(pixmap)
+
+    def  openning(self):
+        img = cv2.imread("1.jpeg",0)
+        kernel = np.ones((5,5),np.uint8)
+        closing = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+        cv2.imwrite("ui.jpg", closing)
+        pixmap = QPixmap("ui.jpg")
+        self.label_filtering.setPixmap(pixmap)
+
+
+
+
 
 
 ##making treeview pretty
@@ -517,8 +594,12 @@ class MainWindow(QMainWindow, my_form_main):
             self.blurring.show()
         if val.data() == "Crop":
             print(val.data())
-            self.blurring = CropWindow()
-            self.blurring.show()
+            self.cropping = CropWindow()
+            self.cropping.show()
+        if val.data() == "Filtering":
+            print(val.data())
+            self.filtering = FilteringWindow()
+            self.filtering.show()
 
 
 ## splash screen
