@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
-    <height>502</height>
+    <width>1548</width>
+    <height>789</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,11 +33,21 @@
       <widget class="QPushButton" name="pushButton">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>80</y>
-         <width>75</width>
-         <height>23</height>
+         <x>30</x>
+         <y>100</y>
+         <width>105</width>
+         <height>31</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">
+background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop:0 rgba(254, 121, 199, 255), stop:1 rgba(170, 85, 255, 255));</string>
        </property>
        <property name="text">
         <string>invert</string>
@@ -46,14 +56,24 @@
       <widget class="QPushButton" name="pushButton_2">
        <property name="geometry">
         <rect>
-         <x>100</x>
-         <y>80</y>
-         <width>75</width>
-         <height>23</height>
+         <x>210</x>
+         <y>100</y>
+         <width>105</width>
+         <height>31</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">
+background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop:0 rgba(254, 121, 199, 255), stop:1 rgba(170, 85, 255, 255));</string>
+       </property>
        <property name="text">
-        <string>PushButton</string>
+        <string>sepia</string>
        </property>
       </widget>
       <widget class="QLabel" name="label">
@@ -82,8 +102,8 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>290</x>
-         <y>30</y>
+         <x>430</x>
+         <y>40</y>
          <width>191</width>
          <height>31</height>
         </rect>
@@ -103,40 +123,50 @@
       <widget class="QLabel" name="label_3">
        <property name="geometry">
         <rect>
-         <x>40</x>
-         <y>150</y>
-         <width>261</width>
-         <height>211</height>
+         <x>20</x>
+         <y>240</y>
+         <width>601</width>
+         <height>511</height>
         </rect>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>1.jpeg</pixmap>
+        <pixmap>2.jpg</pixmap>
        </property>
       </widget>
       <widget class="QLabel" name="label_filtering">
        <property name="geometry">
         <rect>
-         <x>326</x>
-         <y>170</y>
-         <width>211</width>
-         <height>161</height>
+         <x>630</x>
+         <y>240</y>
+         <width>601</width>
+         <height>511</height>
         </rect>
        </property>
        <property name="text">
-        <string>TextLabel</string>
+        <string/>
        </property>
       </widget>
       <widget class="QPushButton" name="pushButton_3">
        <property name="geometry">
         <rect>
-         <x>180</x>
-         <y>80</y>
-         <width>75</width>
-         <height>23</height>
+         <x>390</x>
+         <y>100</y>
+         <width>105</width>
+         <height>31</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">
+background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop:0 rgba(254, 121, 199, 255), stop:1 rgba(170, 85, 255, 255));</string>
        </property>
        <property name="text">
         <string>destroy</string>
@@ -145,40 +175,115 @@
       <widget class="QPushButton" name="pushButton_4">
        <property name="geometry">
         <rect>
-         <x>260</x>
-         <y>80</y>
-         <width>75</width>
-         <height>23</height>
+         <x>550</x>
+         <y>100</y>
+         <width>105</width>
+         <height>31</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop:0 rgba(254, 121, 199, 255), stop:1 rgba(170, 85, 255, 255));</string>
+       </property>
        <property name="text">
-        <string>PushButton</string>
+        <string>Morphological</string>
        </property>
       </widget>
       <widget class="QPushButton" name="pushButton_5">
        <property name="geometry">
         <rect>
-         <x>340</x>
-         <y>80</y>
-         <width>75</width>
-         <height>23</height>
+         <x>700</x>
+         <y>100</y>
+         <width>105</width>
+         <height>31</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop:0 rgba(254, 121, 199, 255), stop:1 rgba(170, 85, 255, 255));</string>
+       </property>
        <property name="text">
-        <string>PushButton</string>
+        <string>openning</string>
        </property>
       </widget>
       <widget class="QPushButton" name="pushButton_6">
        <property name="geometry">
         <rect>
-         <x>420</x>
-         <y>80</y>
-         <width>75</width>
-         <height>23</height>
+         <x>860</x>
+         <y>100</y>
+         <width>105</width>
+         <height>31</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop:0 rgba(254, 121, 199, 255), stop:1 rgba(170, 85, 255, 255));</string>
+       </property>
        <property name="text">
-        <string>PushButton</string>
+        <string>grayScale</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_7">
+       <property name="geometry">
+        <rect>
+         <x>1010</x>
+         <y>100</y>
+         <width>105</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop:0 rgba(254, 121, 199, 255), stop:1 rgba(170, 85, 255, 255));</string>
+       </property>
+       <property name="text">
+        <string>denoise</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_8">
+       <property name="geometry">
+        <rect>
+         <x>1210</x>
+         <y>10</y>
+         <width>20</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(56,58,89);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>exit2.png</normaloff>exit2.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
       </widget>
      </widget>
