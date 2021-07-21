@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>647</width>
-    <height>265</height>
+    <width>676</width>
+    <height>276</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,15 +33,15 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>170</x>
+         <x>90</x>
          <y>0</y>
-         <width>411</width>
+         <width>471</width>
          <height>111</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <family>Tempus Sans ITC</family>
+         <family>MS Shell Dlg 2</family>
          <pointsize>12</pointsize>
          <weight>75</weight>
          <bold>true</bold>
@@ -51,21 +51,26 @@
         <string notr="true">color:rgb(254,121,199);</string>
        </property>
        <property name="text">
-        <string>Choose the path of your image(s) :</string>
+        <string>Please choose the path of images
+ you want to include in your dataset</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
       <widget class="QPushButton" name="browse">
        <property name="geometry">
         <rect>
-         <x>270</x>
-         <y>90</y>
+         <x>280</x>
+         <y>100</y>
          <width>101</width>
          <height>51</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <family>Castellar</family>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>10</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -80,14 +85,48 @@
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>176</x>
-         <y>179</y>
-         <width>141</width>
+         <x>140</x>
+         <y>190</y>
+         <width>281</width>
          <height>21</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(159, 79, 239);</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>10</y>
+         <width>20</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(56,58,89);</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>exit2.png</normaloff>exit2.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
       </widget>
      </widget>
