@@ -1,4 +1,5 @@
 import os
+import glob
 import sys
 from typing import Counter
 from PyQt5.QtGui import QColor, QFont, QStandardItemModel, QStandardItem, QIcon, QPixmap
@@ -17,7 +18,6 @@ from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.Qt import QStandardItemModel
 import matplotlib
-from numpy.core.defchararray import lower
 
 matplotlib.use("Qt5Agg")
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -25,7 +25,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.figure import Figure
 from time import sleep
 from image import Image
-from funcs import allImagesInThisDirectory2, eazyCrop, label
+from funcs import allImagesInThisDirectory, allImagesInThisDirectory2, eazyCrop, label
 import cv2
 
 
@@ -38,15 +38,16 @@ my_form_noise = uic.loadUiType(os.path.join(os.getcwd(), "noiseWindow.ui"))[0]
 my_form_blurring = uic.loadUiType(os.path.join(os.getcwd(), "blurringWindow.ui"))[0]
 my_form_crop = uic.loadUiType(os.path.join(os.getcwd(), "cropWindow.ui"))[0]
 my_form_upload = uic.loadUiType(os.path.join(os.getcwd(), "uploadWindow.ui"))[0]
-my_form_filtering = uic.loadUiType(os.path.join(os.getcwd(), "filteringWindow.ui"))[0]
+my_form_tag = uic.loadUiType(os.path.join(os.getcwd(), "taggingWindow.ui"))[0]
 my_form_split = uic.loadUiType(os.path.join(os.getcwd(), "splitWindow.ui"))[0]
+my_form_filtering = uic.loadUiType(os.path.join(os.getcwd(), "filteringWindow.ui"))[0]
 
 ##global
 Counter = 0
-
-#Uploading
+# Uploading
 class UploadWindow(QMainWindow, my_form_upload):
-    _count = 1
+    _count = 0
+
     def __init__(self):
         super(UploadWindow, self).__init__()
         self.setupUi(self)
@@ -55,26 +56,28 @@ class UploadWindow(QMainWindow, my_form_upload):
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-    def browseImages(self): 
-        imagePath = QFileDialog.getExistingDirectory(self, 'Select file')  
-        print (imagePath)
+    def browseImages(self):
+        imagePath = QFileDialog.getExistingDirectory(self, "Select file")
+        # print(imagePath)
         list_of_images_directory = allImagesInThisDirectory2(imagePath)
         l = len(list_of_images_directory)
-        if l == 0 :
+        if l == 0:
             self.label.setText("There is no image here!")
         else:
-            for i in range(l-1):
-                UploadWindow._count +=1
+            for i in range(l):
+                UploadWindow._count += 1
                 name = str(UploadWindow._count)
                 pixmap = QPixmap(list_of_images_directory[i])
-                pixmap = pixmap.scaled(450, 600)
-                pixmap.save(".\images\image"+name+".jpg")
-            selectedImage = QPixmap(list_of_images_directory[l-1])
-            selectedImage = selectedImage.scaled(450, 600)
-            selectedImage.save(".\images\selected.jpg")
+                pixmap = pixmap.scaled(600, 450)
+                pixmap.save(".\images\image" + name + ".jpg")
+            selectedImage = QPixmap(list_of_images_directory[0])
+            selectedImage = selectedImage.scaled(600, 450)
+            selectedImage.save("2.jpg")
+            selectedImage = selectedImage.scaled(240, 180)
+            selectedImage.save("1.jpeg")
+            selectedImage.save("1.jpg")
             self.label.setText("successfully uploaded!")
-        
-        
+
 
 ##flip window
 class FlipWindow(QMainWindow, my_form_flip):
@@ -110,11 +113,20 @@ class BrightnessWindow(QMainWindow, my_form_brightness):
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.pushButton_4.clicked.connect(self.exit)
+        self.pushButton_5.clicked.connect(self.applyToAll)
+
+    def applyToAll(self):
+        my_list = allImagesInThisDirectory("./images")
+        for img in my_list:
+            ans = img.adjustBrightness(self.int / 100)
+            UploadWindow._count += 1
+            cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", ans)
 
     def exit(self):
         self.close()
 
     def state_changed(self, int):
+        self.int = int
         imgObject = Image("2.jpg")
         img = imgObject.adjustBrightness(int / 100)
         cv2.imwrite("ui.jpg", img)
@@ -133,11 +145,21 @@ class RotationWindow(QMainWindow, my_form_rotation):
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.pushButton_7.clicked.connect(self.exit)
+        self.pushButton_8.clicked.connect(self.applyToAll)
+
+    def applyToAll(self):
+        my_list = allImagesInThisDirectory("./images")
+
+        for img in my_list:
+            ans = img.rotate(-self.int)
+            UploadWindow._count += 1
+            cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", ans)
 
     def exit(self):
         self.close()
 
     def state_changed(self, int):
+        self.int = int
         imgObject = Image("2.jpg")
         img = imgObject.rotate(-int)
         cv2.imwrite("ui.jpg", img)
@@ -164,6 +186,15 @@ class NoiseWindow(QMainWindow, my_form_noise):
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.pushButton_7.clicked.connect(self.exit)
+        self.pushButton_8.clicked.connect(self.applyToAll)
+
+    def applyToAll(self):
+        my_list = allImagesInThisDirectory("./images")
+
+        for img in my_list:
+            ans = img.addnoise(self.mode, self.int / 100)
+            UploadWindow._count += 1
+            cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", ans)
 
     def exit(self):
         self.close()
@@ -199,6 +230,7 @@ class NoiseWindow(QMainWindow, my_form_noise):
 
     def state_changed(self, int):
         imgObject = Image("2.jpg")
+        self.int = int
         img = imgObject.addnoise(self.mode, int / 100)
         cv2.imwrite("ui.jpg", img)
         pixmap = QtGui.QPixmap("ui.jpg")
@@ -219,10 +251,25 @@ class BlurringWindow(QMainWindow, my_form_blurring):
         self.pushButton_2.clicked.connect(self.median)
         self.pushButton_3.clicked.connect(self.bilateral)
         self.pushButton_4.clicked.connect(self.exit)
+        self.pushButton_5.clicked.connect(self.applyToAll)
 
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+    def applyToAll(self):
+        my_list = allImagesInThisDirectory("./images")
+        if self.int % 2 == 0:
+            self.int += 1
+        for img in my_list:
+            if self.mode == "g":
+                ans = cv2.GaussianBlur(img.img, (self.int, self.int), 0)
+            elif self.mode == "m":
+                ans = cv2.medianBlur(img.img, self.int)
+            elif self.mode == "b":
+                ans = cv2.bilateralFilter(img.img, self.int, 75, 75)
+            UploadWindow._count += 1
+            cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", ans)
 
     def gauss(self):
         self.mode = "g"
@@ -240,6 +287,7 @@ class BlurringWindow(QMainWindow, my_form_blurring):
         self.close()
 
     def state_changed(self, int):
+        self.int = int
         imgObject = Image("2.jpg")
         if int % 2 == 0:
             int += 1
@@ -261,13 +309,37 @@ class CropWindow(QMainWindow, my_form_crop):
         self.setupUi(self)
         self.setWindowTitle("crop")
         self.ref_point = []
+        self.pushButton_6.clicked.connect(self.next)
+        self.pushButton_3.clicked.connect(self.prev)
+        self.pushButton.clicked.connect(self.apply)
+        self.imagename = "1"
         self.pushButton_4.clicked.connect(self.exit)
 
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-        # self.label = QtWidgets.QLabel(self)
+    def prev(self):
+        self.imagename = str(np.clip(int(self.imagename), 2, None) - 1)
+        pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        self.label.setPixmap(pixmap)
+        if os.path.isfile("./cropped/croppedimage" + self.imagename + ".jpg"):
+            pixmap = QPixmap("./cropped/croppedimage" + self.imagename + ".jpg")
+        self.label_2.setPixmap(pixmap)
+
+    def next(self):
+        self.imagename = str(
+            np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1
+        )
+        pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        self.label.setPixmap(pixmap)
+        if os.path.isfile("./cropped/croppedimage" + self.imagename + ".jpg"):
+            pixmap = QPixmap("./cropped/croppedimage" + self.imagename + ".jpg")
+        self.label_2.setPixmap(pixmap)
+
+    def apply(self):
+        image = cv2.imread("ui.jpg")
+        cv2.imwrite("./cropped/croppedimage" + self.imagename + ".jpg", image)
 
     def mousePressEvent(self, event):
         self.originQPoint = [event.x(), event.y()]
@@ -298,8 +370,8 @@ class CropWindow(QMainWindow, my_form_crop):
         ):
             self.ref_point.clear()
             return
-        imgObject = Image("2.jpg")
-        image = imgObject.img
+        imgObject = Image("./images/image" + self.imagename + ".jpg")
+        image = cv2.resize(imgObject.img, (600, 450))
         if self.ref_point[0][1] < 280:
             self.ref_point[0][1] = 280
         if self.ref_point[1][1] < 280:
@@ -331,8 +403,152 @@ class CropWindow(QMainWindow, my_form_crop):
 
     def exit(self):
         self.close()
-    
-#filtering
+
+
+# tag window
+class TaggingWindow(QMainWindow, my_form_tag):
+    def __init__(self):
+        super(TaggingWindow, self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle("Tagging")
+        self.ref_point = [None, None]
+        self.pushButton_4.clicked.connect(self.exit)
+        self.pushButton_6.clicked.connect(self.next)
+        self.pushButton_3.clicked.connect(self.prev)
+        self.pushButton.clicked.connect(self.apply)
+        self.imagename = "1"
+        self.totalTexts = []
+        self.lineEdit.hide()
+        self.lineEdit.returnPressed.connect(self.tag)
+        # remove title bar
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+    def prev(self):
+        self.imagename = str(np.clip(int(self.imagename), 2, None) - 1)
+        pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        self.label.setPixmap(pixmap)
+        if os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
+            pixmap = QPixmap("./tagged/taggedimage" + self.imagename + ".jpg")
+        pixmap = pixmap.scaled(600, 450)
+        self.label_2.setPixmap(pixmap)
+        self.lineEdit.hide()
+
+    def next(self):
+        self.lineEdit.hide()
+        self.imagename = str(
+            np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1
+        )
+        pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        self.label.setPixmap(pixmap)
+        if os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
+            pixmap = QPixmap("./tagged/taggedimage" + self.imagename + ".jpg")
+        pixmap = pixmap.scaled(600, 450)
+        self.label_2.setPixmap(pixmap)
+
+    def apply(self):
+        image = cv2.imread("ui.jpg")
+        cv2.imwrite("./tagged/taggedimage" + self.imagename + ".jpg", image)
+        file1 = open("./tagged/ref_pointsOfimage" + self.imagename + ".txt", "a")
+        file1.write(str(self.ref_point) + "\t" + self.totalTexts[-1] + "\n")
+        file1.close()
+
+    def tag(self):
+        self.totalTexts.append(self.lineEdit.text())
+        imageObject = Image("ui.jpg")
+        image = imageObject.img
+        self.x += 1
+        self.y += 15
+        cv2.putText(
+            image,
+            self.totalTexts[-1],
+            (self.x, self.y),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (255, 0, 120),
+            2,
+        )
+        cv2.imwrite("ui.jpg", image)
+        pixmap = QPixmap("ui.jpg")
+        self.label_2.setPixmap(pixmap)
+        self.lineEdit.clear()
+        self.lineEdit.hide()
+
+    def mousePressEvent(self, event):
+        self.originQPoint = [event.x(), event.y()]
+        self.ref_point[0] = self.originQPoint
+        self.originQPoint = event.pos()
+        self.currentQRubberBand = QtWidgets.QRubberBand(
+            QtWidgets.QRubberBand.Rectangle, self
+        )
+        self.currentQRubberBand.setGeometry(
+            QtCore.QRect(self.originQPoint, QtCore.QSize())
+        )
+        self.currentQRubberBand.show()
+
+    def mouseMoveEvent(self, event):
+        self.currentQRubberBand.setGeometry(
+            QtCore.QRect(self.originQPoint, event.pos()).normalized()
+        )
+
+    def mouseReleaseEvent(self, event):
+        self.endQPoint = [event.x(), event.y()]
+        self.ref_point[1] = self.endQPoint
+        self.currentQRubberBand.hide()
+        currentQRect = self.currentQRubberBand.geometry()
+        self.currentQRubberBand.deleteLater()
+        if (
+            self.ref_point[0][0] == self.ref_point[1][0]
+            or self.ref_point[0][1] == self.ref_point[1][1]
+        ):
+            self.ref_point.clear()
+            return
+        imgObject = Image("./images/image" + self.imagename + ".jpg")
+        if os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
+            imgObject = Image("./tagged/taggedimage" + self.imagename + ".jpg")
+
+        image = cv2.resize(imgObject.img, (600, 450))
+        pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        pixmap = pixmap.scaled(600, 450)
+        self.label.setPixmap(pixmap)
+        if self.ref_point[0][1] < 280:
+            self.ref_point[0][1] = 280
+        if self.ref_point[1][1] < 280:
+            self.ref_point[1][1] = 280
+        if self.ref_point[1][1] > 730:
+            self.ref_point[1][1] = 730
+        if self.ref_point[0][1] > 730:
+            self.ref_point[0][1] = 730
+        if self.ref_point[0][0] < 30:
+            self.ref_point[0][0] = 30
+        if self.ref_point[1][0] < 30:
+            self.ref_point[1][0] = 30
+        if self.ref_point[0][0] > 630:
+            self.ref_point[0][0] = 630
+        if self.ref_point[1][0] > 630:
+            self.ref_point[1][0] = 630
+        self.x = min(self.ref_point[0][0], self.ref_point[1][0]) - 30
+        x2 = max(self.ref_point[0][0], self.ref_point[1][0]) - 30
+        self.y = min(self.ref_point[0][1], self.ref_point[1][1]) - 280
+        y2 = max(self.ref_point[0][1], self.ref_point[1][1]) - 280
+
+        image = cv2.rectangle(
+            image,
+            (self.x, self.y),
+            (x2, y2),
+            (255, 0, 255),
+            1,
+        )
+        self.lineEdit.show()
+        cv2.imwrite("ui.jpg", image)
+        pixmap = QPixmap("ui.jpg")
+        self.label_2.setPixmap(pixmap)
+
+    def exit(self):
+        self.close()
+
+
+# filtering
 class FilteringWindow(QMainWindow, my_form_filtering):
     def __init__(self):
         super(FilteringWindow, self).__init__()
@@ -342,7 +558,7 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        
+
         self.pushButton.clicked.connect(self.apply_invert)
         self.pushButton_2.clicked.connect(self.apply_sepia)
         self.pushButton_3.clicked.connect(self.destroy)
@@ -354,7 +570,7 @@ class FilteringWindow(QMainWindow, my_form_filtering):
 
     def exit(self):
         self.close()
-    
+
     def apply_invert(self):
         imgObject = cv2.imread("2.jpg")
         cv2.imwrite("ui.jpg", cv2.bitwise_not(imgObject))
@@ -365,8 +581,8 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         imgObject = cv2.imread("2.jpg")
         gray = imgObject.copy()
         gray = gray.astype(np.float)
-        gray[:,:,0] = gray[:,:,1] = gray[:,:,2] = 1.5*np.mean(imgObject,2)
-        gray[gray>255] = 255
+        gray[:, :, 0] = gray[:, :, 1] = gray[:, :, 2] = 1.5 * np.mean(imgObject, 2)
+        gray[gray > 255] = 255
         gray = gray.astype(np.uint8)
         cv2.imwrite("ui.jpg", cv2.bitwise_not(gray))
         pixmap = QPixmap("ui.jpg")
@@ -374,12 +590,15 @@ class FilteringWindow(QMainWindow, my_form_filtering):
 
     def apply_sepia(self):
         img = cv2.imread("2.jpg")
-        img = np.array(img, dtype=np.float64) # converting to float to prevent loss
-        img = cv2.transform(img, np.matrix([[0.393, 0.769, 0.189],
-                                            [0.349, 0.686, 0.168],
-                                            [0.272, 0.534, 0.869]])) # multipying image with special sepia matrix
-        img[np.where(img > 255)] = 255 # normalizing values greater than 255 to 255
-        img = np.array(img, dtype=np.uint8) # converting back to int
+        img = np.array(img, dtype=np.float64)  # converting to float to prevent loss
+        img = cv2.transform(
+            img,
+            np.matrix(
+                [[0.393, 0.769, 0.189], [0.349, 0.686, 0.168], [0.272, 0.534, 0.869]]
+            ),
+        )  # multipying image with special sepia matrix
+        img[np.where(img > 255)] = 255  # normalizing values greater than 255 to 255
+        img = np.array(img, dtype=np.uint8)  # converting back to int
         cv2.imwrite("ui.jpg", cv2.bitwise_not(img))
         pixmap = QPixmap("ui.jpg")
         self.label_filtering.setPixmap(pixmap)
@@ -387,30 +606,30 @@ class FilteringWindow(QMainWindow, my_form_filtering):
     def destroy(self):
         img = cv2.imread("2.jpg")
         hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-        lower_red = np.array([10,10,10])
-        upper_red = np.array([240,240,240])
+        lower_red = np.array([10, 10, 10])
+        upper_red = np.array([240, 240, 240])
         mask = cv2.inRange(hsv, lower_red, upper_red)
-        res = cv2.bitwise_and(img,img, mask=mask)
+        res = cv2.bitwise_and(img, img, mask=mask)
         cv2.imwrite("ui.jpg", res)
         pixmap = QPixmap("ui.jpg")
         self.label_filtering.setPixmap(pixmap)
 
-    def  Morphological(self):
-        img = cv2.imread("2.jpg",0)
-        kernel = np.ones((5,5),np.uint8)
+    def Morphological(self):
+        img = cv2.imread("2.jpg", 0)
+        kernel = np.ones((5, 5), np.uint8)
         gradient = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
         cv2.imwrite("ui.jpg", gradient)
         pixmap = QPixmap("ui.jpg")
         self.label_filtering.setPixmap(pixmap)
 
-    def  openning(self):
-        img = cv2.imread("2.jpg",0)
-        kernel = np.ones((5,5),np.uint8)
+    def openning(self):
+        img = cv2.imread("2.jpg", 0)
+        kernel = np.ones((5, 5), np.uint8)
         openning = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
         cv2.imwrite("ui.jpg", openning)
         pixmap = QPixmap("ui.jpg")
         self.label_filtering.setPixmap(pixmap)
-    
+
     def denoise(self):
         imgObject = Image("2.jpg")
         img = imgObject.denoise()
@@ -418,7 +637,8 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         pixmap = QPixmap("ui.jpg")
         self.label_filtering.setPixmap(pixmap)
 
-#Split
+
+# Split
 class SplitWindow(QMainWindow, my_form_split):
     def __init__(self):
         super(SplitWindow, self).__init__()
@@ -615,8 +835,12 @@ class MainWindow(QMainWindow, my_form_main):
             self.blurring.show()
         if val.data() == "Crop":
             print(val.data())
-            self.cropping = CropWindow()
-            self.cropping.show()
+            self.crop = CropWindow()
+            self.crop.show()
+        if val.data() == "Tagging":
+            print(val.data())
+            self.tag = TaggingWindow()
+            self.tag.show()
         if val.data() == "Filtering":
             print(val.data())
             self.filtering = FilteringWindow()
@@ -670,6 +894,10 @@ class SplashScreen(QMainWindow, my_form_SplashScreen):
         # increase counter
         Counter += 1
 
+
+files = glob.glob("./images/*") + glob.glob("./cropped/*") + glob.glob("./tagged/*")
+for f in files:
+    os.remove(f)
 
 app = QApplication([])
 w = SplashScreen()

@@ -26,6 +26,7 @@ def allImagesInThisDirectory(directory):
     list_of_image_objects = [Image(x) for x in list_of_images_directory]
     return list_of_image_objects
 
+
 def allImagesInThisDirectory2(directory):
     list_of_possible_formats = [
         "bmp",
