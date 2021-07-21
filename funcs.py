@@ -26,6 +26,27 @@ def allImagesInThisDirectory(directory):
     list_of_image_objects = [Image(x) for x in list_of_images_directory]
     return list_of_image_objects
 
+def allImagesInThisDirectory2(directory):
+    list_of_possible_formats = [
+        "bmp",
+        "pbm",
+        "pgm",
+        "ppm",
+        "sr",
+        "ras",
+        "jpeg",
+        "jpg",
+        "jpe",
+        "jp2",
+        "tiff",
+        "tif",
+        "png",
+    ]
+    list_of_images_directory = list()
+    for format in list_of_possible_formats:
+        list_of_images_directory += glob.glob(directory + "\\*." + format)
+    return list_of_images_directory
+
 
 # now let's initialize the list of reference point
 cropping = False

@@ -24,7 +24,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.figure import Figure
 from time import sleep
 from image import Image
-from funcs import allImagesInThisDirectory, eazyCrop, label
+from funcs import allImagesInThisDirectory2, eazyCrop, label
 import cv2
 
 
@@ -40,32 +40,36 @@ my_form_upload = uic.loadUiType(os.path.join(os.getcwd(), "uploadWindow.ui"))[0]
 
 ##global
 Counter = 0
-# Uploading
+
+#Uploading
 class UploadWindow(QMainWindow, my_form_upload):
     _count = 1
-
     def __init__(self):
         super(UploadWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Upload")
         self.browse.clicked.connect(self.browseImages)
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-    def browseImages(self):
-
-        fName = QFileDialog.getOpenFileName(
-            self,
-            "Select Images",
-            ".",
-            "image files(*.png *.tif *.tiff *.jp2 *.jpe *.jpg *.jpeg *.ras *.ppm *.pbm *.pgm)",
-        )
-        imagePath = fName[0]
-        UploadWindow._count += 1
-        name = str(UploadWindow._count)
-        pixmap = QPixmap(imagePath)
-        pixmap.save("image" + name + ".jpg")
-
-        # self.fileName.setText(fName[0])
-
+    def browseImages(self): 
+        imagePath = QFileDialog.getExistingDirectory(self, 'Select file')  
+        print (imagePath)
+        list_of_images_directory = allImagesInThisDirectory2(imagePath)
+        l = len(list_of_images_directory)
+        if l == 0 :
+            self.label.setText("There is no image here!")
+        else:
+            for i in range(l-1):
+                UploadWindow._count +=1
+                name = str(UploadWindow._count)
+                pixmap = QPixmap(list_of_images_directory[i])
+                pixmap.save("image"+name+".jpg")
+            selectedImage = QPixmap(list_of_images_directory[l-1])
+            selectedImage.save("selected.jpg")
+            self.label.setText("successfully uploaded!")
+        
+        
 
 ##flip window
 class FlipWindow(QMainWindow, my_form_flip):

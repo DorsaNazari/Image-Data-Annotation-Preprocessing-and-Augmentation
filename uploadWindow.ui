@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>647</width>
-    <height>272</height>
+    <height>265</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,11 +30,11 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>120</x>
-         <y>10</y>
+         <x>170</x>
+         <y>0</y>
          <width>411</width>
          <height>111</height>
         </rect>
@@ -51,14 +51,14 @@
         <string notr="true">color:rgb(254,121,199);</string>
        </property>
        <property name="text">
-        <string>Choose the image(s) you want to add:</string>
+        <string>Choose the path of your image(s) :</string>
        </property>
       </widget>
       <widget class="QPushButton" name="browse">
        <property name="geometry">
         <rect>
-         <x>210</x>
-         <y>110</y>
+         <x>270</x>
+         <y>90</y>
          <width>101</width>
          <height>51</height>
         </rect>
@@ -75,6 +75,19 @@
        </property>
        <property name="text">
         <string>Browse</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>176</x>
+         <y>179</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </widget>
