@@ -27,6 +27,7 @@ from time import sleep
 from image import Image
 from funcs import allImagesInThisDirectory, allImagesInThisDirectory2, eazyCrop, label
 import cv2
+import random
 
 
 my_form_SplashScreen = uic.loadUiType(os.path.join(os.getcwd(), "first.ui"))[0]
@@ -64,7 +65,6 @@ class UploadWindow(QMainWindow, my_form_upload):
 
     def browseImages(self):
         imagePath = QFileDialog.getExistingDirectory(self, "Select file")
-        # print(imagePath)
         list_of_images_directory = allImagesInThisDirectory2(imagePath)
         l = len(list_of_images_directory)
         if l == 0:
@@ -726,6 +726,64 @@ class SplitWindow(QMainWindow, my_form_split):
         super(SplitWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Split")
+
+        # remove title bar
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        imagePath = ".\images"
+        list_of_images_directory = allImagesInThisDirectory2(imagePath)
+        self.num =  len(list_of_images_directory)
+        if self.num == 0:
+            self.label_3.setText("You did not upload images!")
+        self.label.setText(f"{self.num}")
+        self.ch = 0
+        self.Enter.clicked.connect(self.enter_pressed)
+        self.OK_Button.clicked.connect(self.OK_pressed)
+        self.pushButton_4.clicked.connect(self.exit)
+
+    def exit(self):
+        self.close()
+        
+
+    def enter_pressed(self):
+        if self.lineEdit.text() != '':
+            self.ch = 1
+            pTrain = float(self.lineEdit.text())
+            if pTrain>100 or pTrain<0 :
+                self.label_3.setText("it is not percentage!")
+            else:
+                self.label_3.clear()
+                self.train = int(pTrain * self.num /100)
+                self.label_4.setText(f"The Split data number is :     {self.train} images for Train\n\t\t\t {self.num - self.train} images for Test\n\t\t\t  is it OK ?")
+            
+    
+    def OK_pressed(self):
+        if self.ch == 0:
+            self.label_3.setText("First Press Enter!")
+        else:
+            self.Trainlist = random.sample(range(1,self.num), self.train)
+            self.doSplit()
+            self.close()
+
+
+    def doSplit(self):
+        list_of_images_directory = allImagesInThisDirectory2(".\images")
+        j = k = 1
+        for i in range(len(list_of_images_directory)):
+            pixmap = QPixmap(list_of_images_directory[i])
+            if i in self.Trainlist:
+                pixmap.save(f".\splitData\Train\image{j}.jpg")
+                j+=1
+            else:
+                pixmap.save(f".\splitData\Test\image{k}.jpg")
+                k+=1
+                
+            
+                
+
+
+
 
 
 ##making treeview pretty
