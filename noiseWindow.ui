@@ -40,7 +40,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>10</y>
+         <y>60</y>
          <width>241</width>
          <height>201</height>
         </rect>
@@ -55,8 +55,8 @@
       <widget class="QLabel" name="label_desqription">
        <property name="geometry">
         <rect>
-         <x>290</x>
-         <y>40</y>
+         <x>280</x>
+         <y>60</y>
          <width>301</width>
          <height>51</height>
         </rect>
@@ -72,7 +72,8 @@
         <string notr="true">color:rgb(254,121,199);</string>
        </property>
        <property name="text">
-        <string>Add noise</string>
+        <string>Add noise to help your model be
+ more resilient to camera artifacts.</string>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
@@ -129,7 +130,7 @@
        <property name="geometry">
         <rect>
          <x>280</x>
-         <y>100</y>
+         <y>130</y>
          <width>93</width>
          <height>28</height>
         </rect>
@@ -142,7 +143,7 @@
        <property name="geometry">
         <rect>
          <x>390</x>
-         <y>100</y>
+         <y>130</y>
          <width>93</width>
          <height>28</height>
         </rect>
@@ -155,7 +156,7 @@
        <property name="geometry">
         <rect>
          <x>500</x>
-         <y>100</y>
+         <y>130</y>
          <width>93</width>
          <height>28</height>
         </rect>
@@ -168,7 +169,7 @@
        <property name="geometry">
         <rect>
          <x>280</x>
-         <y>150</y>
+         <y>180</y>
          <width>93</width>
          <height>28</height>
         </rect>
@@ -181,7 +182,7 @@
        <property name="geometry">
         <rect>
          <x>390</x>
-         <y>150</y>
+         <y>180</y>
          <width>93</width>
          <height>28</height>
         </rect>
@@ -194,7 +195,7 @@
        <property name="geometry">
         <rect>
          <x>500</x>
-         <y>150</y>
+         <y>180</y>
          <width>93</width>
          <height>28</height>
         </rect>
@@ -248,6 +249,35 @@
        </property>
        <property name="text">
         <string>Apply to all</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_desqription_3">
+       <property name="geometry">
+        <rect>
+         <x>-20</x>
+         <y>10</y>
+         <width>191</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>20</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:rgb(123, 129, 195);</string>
+       </property>
+       <property name="text">
+        <string>Noise</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </widget>
