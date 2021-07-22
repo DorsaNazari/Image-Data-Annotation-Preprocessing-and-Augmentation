@@ -2,6 +2,12 @@ from numpy.lib.type_check import imag
 from image import Image
 import glob
 import cv2
+import numpy as np
+
+
+def myfunc(x):
+    m = x.split("image")[-1]
+    return int(m.split(".")[0])
 
 
 def allImagesInThisDirectory(directory):
@@ -22,7 +28,8 @@ def allImagesInThisDirectory(directory):
     ]
     list_of_images_directory = list()
     for format in list_of_possible_formats:
-        list_of_images_directory += glob.glob(directory + "\\*." + format)
+        list_of_images_directory += glob.glob(directory + "/*." + format)
+    list_of_images_directory.sort(key=myfunc)
     list_of_image_objects = [Image(x) for x in list_of_images_directory]
     return list_of_image_objects
 
@@ -45,7 +52,7 @@ def allImagesInThisDirectory2(directory):
     ]
     list_of_images_directory = list()
     for format in list_of_possible_formats:
-        list_of_images_directory += glob.glob(directory + "\\*." + format)
+        list_of_images_directory += glob.glob(directory + "/*." + format)
     return list_of_images_directory
 
 
@@ -189,3 +196,18 @@ def label(image):
             image = original.copy()
             cv2.destroyAllWindows()
             return [clone, ref_point, total_texts]
+
+
+def rotate(origin, point, angle):
+    ox, oy = origin
+    px, py = point
+    angle = np.radians(angle)
+    qx = ox + np.cos(angle) * (px - ox) - np.sin(angle) * (py - oy)
+    qy = oy + np.sin(angle) * (px - ox) + np.cos(angle) * (py - oy)
+    return int(qx), int(qy)
+
+
+# print(rotate((0,900),(1200,0),-180))
+# print(rotate((0,900),(1200,0),-180))
+# print(rotate((,900),(1200,0),-180))
+# print(rotate((0,900),(1200,0),-180))

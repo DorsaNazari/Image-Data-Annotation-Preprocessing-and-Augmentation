@@ -25,7 +25,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from matplotlib.figure import Figure
 from time import sleep
 from image import Image
-from funcs import allImagesInThisDirectory, allImagesInThisDirectory2, eazyCrop, label
+from funcs import allImagesInThisDirectory, allImagesInThisDirectory2, rotate, label
 import cv2
 
 
@@ -42,6 +42,7 @@ my_form_tag = uic.loadUiType(os.path.join(os.getcwd(), "taggingWindow.ui"))[0]
 my_form_split = uic.loadUiType(os.path.join(os.getcwd(), "splitWindow.ui"))[0]
 my_form_filtering = uic.loadUiType(os.path.join(os.getcwd(), "filteringWindow.ui"))[0]
 my_form_resize = uic.loadUiType(os.path.join(os.getcwd(), "resizeWindow.ui"))[0]
+my_form_fast = uic.loadUiType(os.path.join(os.getcwd(), "fastWindow.ui"))[0]
 
 
 ##global
@@ -74,7 +75,7 @@ class UploadWindow(QMainWindow, my_form_upload):
                 UploadWindow._count += 1
                 name = str(UploadWindow._count)
                 pixmap = QPixmap(list_of_images_directory[i])
-                pixmap = pixmap.scaled(600, 450)
+                # pixmap = pixmap.scaled(600, 450)
                 pixmap.save(".\images\image" + name + ".jpg")
             selectedImage = QPixmap(list_of_images_directory[0])
             selectedImage = selectedImage.scaled(600, 450)
@@ -88,23 +89,25 @@ class UploadWindow(QMainWindow, my_form_upload):
 ## flip window
 class FlipWindow(QMainWindow, my_form_flip):
     def __init__(self):
-        super(FlipWindow,self).__init__()
+        super(FlipWindow, self).__init__()
         self.setupUi(self)
-        self.setWindowTitle('Flip')
+        self.setWindowTitle("Flip")
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         self.imagename = "1"
-        self.imagename = str(np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1)
+        self.imagename = str(
+            np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1
+        )
         pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
-        pixmap = pixmap.scaled(550,350)
+        pixmap = pixmap.scaled(550, 350)
         self.label_original_image.setPixmap(pixmap)
         self.label_original_image.setAlignment(QtCore.Qt.AlignCenter)
 
         # self.checkBox_h.stateChanged.connect(self.state_changed)
         # self.checkBox_v.stateChanged.connect(self.state_changed)
-        self.pushButton.clicked.connect(self.state_changed )
+        self.pushButton.clicked.connect(self.state_changed)
         self.pushButton_4.clicked.connect(self.exit)
         self.pushButton_5.clicked.connect(self.applyToAll)
 
@@ -112,30 +115,32 @@ class FlipWindow(QMainWindow, my_form_flip):
         self.close()
 
     def state_changed(self, int):
+
         src = cv2.imread("1.jpg")
         imgObject = Image("./images/image" + self.imagename + ".jpg")
         image = cv2.resize(imgObject.img, (550, 350))
         cv2.imwrite("my.jpg", image)
         src = cv2.imread("my.jpg")
 
-        if not(self.checkBox_h.isChecked() & self.checkBox_v.isChecked()):
+        if not (self.checkBox_h.isChecked() & self.checkBox_v.isChecked()):
             self.label_fliped_image.setText(" ")
-        if self.checkBox_v.isChecked() and not(self.checkBox_h.isChecked()):
-            img = cv2.flip(src, 0)
-            cv2.imwrite("my.png", img)
-            pixmap = QtGui.QPixmap('my.png')
-            self.label_fliped_image.setPixmap(pixmap)
-            self.label_fliped_image.show()
-        if self.checkBox_h.isChecked() and not(self.checkBox_v.isChecked()):
-            img = cv2.flip(src, 1)
-            cv2.imwrite("my.png", img)
-            pixmap = QtGui.QPixmap('my.png')
-            self.label_fliped_image.setPixmap(pixmap)
-            self.label_fliped_image.show()
         if self.checkBox_h.isChecked() & self.checkBox_v.isChecked():
             img = cv2.flip(src, -1)
             cv2.imwrite("my.png", img)
-            pixmap = QtGui.QPixmap('my.png')
+            pixmap = QtGui.QPixmap("my.png")
+            self.label_fliped_image.setPixmap(pixmap)
+            self.label_fliped_image.show()
+
+        elif self.checkBox_v.isChecked():
+            img = cv2.flip(src, 0)
+            cv2.imwrite("my.png", img)
+            pixmap = QtGui.QPixmap("my.png")
+            self.label_fliped_image.setPixmap(pixmap)
+            self.label_fliped_image.show()
+        elif self.checkBox_h.isChecked():
+            img = cv2.flip(src, 1)
+            cv2.imwrite("my.png", img)
+            pixmap = QtGui.QPixmap("my.png")
             self.label_fliped_image.setPixmap(pixmap)
             self.label_fliped_image.show()
 
@@ -146,11 +151,11 @@ class FlipWindow(QMainWindow, my_form_flip):
                 img = cv2.flip(src.img, -1)
                 UploadWindow._count += 1
                 cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", img)
-            if self.checkBox_v.isChecked() and not(self.checkBox_h.isChecked()):
+            elif self.checkBox_v.isChecked():
                 img = cv2.flip(src.img, 0)
                 UploadWindow._count += 1
                 cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", img)
-            if self.checkBox_h.isChecked() and not(self.checkBox_v.isChecked()):
+            elif self.checkBox_h.isChecked():
                 img = cv2.flip(src.img, 1)
                 UploadWindow._count += 1
                 cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", img)
@@ -159,24 +164,25 @@ class FlipWindow(QMainWindow, my_form_flip):
 ## resize window
 class ResizeWindow(QMainWindow, my_form_resize):
     def __init__(self):
-        super(ResizeWindow,self).__init__()
+        super(ResizeWindow, self).__init__()
         self.setupUi(self)
-        self.setWindowTitle('Resize')
+        self.setWindowTitle("Resize")
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
         self.imagename = "1"
-        self.imagename = str(np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1)
+        self.imagename = str(
+            np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1
+        )
         pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
-        pixmap = pixmap.scaled(550,350)
+        pixmap = pixmap.scaled(550, 350)
         self.label_original_image.setPixmap(pixmap)
         self.label_original_image.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.pushButton.clicked.connect(self.state_changed )
+        self.pushButton.clicked.connect(self.state_changed)
         self.pushButton_4.clicked.connect(self.exit)
         self.pushButton_5.clicked.connect(self.applyToAll)
-
 
     def exit(self):
         self.close()
@@ -189,15 +195,15 @@ class ResizeWindow(QMainWindow, my_form_resize):
         imgObject = Image("./images/image" + self.imagename + ".jpg")
         image = cv2.resize(imgObject.img, (550, 350))
 
-        cv2.imwrite("my.jpg", image)
+        im = cv2.imwrite("my.jpg", image)
         src = cv2.imread("my.jpg")
-        height = np.int64(src.shape[0] * h / 100)
-        width = np.int64(src.shape[1] * w / 100)
+        height = np.int(src.shape[0] * h / 100)
+        width = np.int(src.shape[1] * w / 100)
         dim = (width, height)
-  
-        img = cv2.resize(src, dim, interpolation = cv2.INTER_AREA)
+
+        img = cv2.resize(src, dim, interpolation=cv2.INTER_AREA)
         cv2.imwrite("my.png", img)
-        pixmap = QtGui.QPixmap('my.png')
+        pixmap = QtGui.QPixmap("my.png")
         self.label_resized_image.setPixmap(pixmap)
         self.label_resized_image.setAlignment(QtCore.Qt.AlignCenter)
         self.label_resized_image.show()
@@ -211,7 +217,7 @@ class ResizeWindow(QMainWindow, my_form_resize):
             height = np.int64(src.img.shape[0] * h / 100)
             width = np.int64(src.img.shape[1] * w / 100)
             dim = (width, height)
-            img = cv2.resize(src.img, dim, interpolation = cv2.INTER_AREA)
+            img = cv2.resize(src.img, dim, interpolation=cv2.INTER_AREA)
             UploadWindow._count += 1
             cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", img)
 
@@ -263,11 +269,59 @@ class RotationWindow(QMainWindow, my_form_rotation):
 
     def applyToAll(self):
         my_list = allImagesInThisDirectory("./images")
-
+        t = 0
         for img in my_list:
+            t += 1
+            origin = (((len(img.img[0]) - 1) // 2), ((len(img.img) - 1) // 2))
             ans = img.rotate(-self.int)
             UploadWindow._count += 1
             cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", ans)
+            if os.path.isfile("./tagged/ref_pointsOfimage" + str(t) + ".txt"):
+                file1 = open("./tagged/ref_pointsOfimage" + str(t) + ".txt", "r")
+                lines = file1.read().split("\n")
+                file1.close()
+                for line in lines:
+                    if line == "":
+                        continue
+                    points, text = line.split("->")
+                    x0, y0, xp0, yp0 = points.split(",")
+                    x1, y1 = rotate(origin, (int(x0), int(y0)), self.int)
+                    x2, y2 = rotate(origin, (int(xp0), int(yp0)), self.int)
+                    x3, y3 = rotate(origin, (int(x0), int(yp0)), self.int)
+                    x4, y4 = rotate(origin, (int(xp0), int(y0)), self.int)
+                    xmin = min(x1, x2, x3, x4)
+                    ymin = min(y1, y2, y3, y4)
+                    xmax = max(x1, x2, x3, x4)
+                    ymax = max(y1, y2, y3, y4)
+                    if xmin < 0:
+                        xmin = 0
+                    if ymin < 0:
+                        ymin = 0
+                    if xmax >= len(img.img[0]):
+                        xmax = len(img.img[0]) - 1
+                    if ymax >= len(img.img):
+                        ymax = len(img.img) - 1
+                    # cv2.rectangle(ans, (xmin, ymin), (xmax, ymax), (255, 0, 255), 2)
+                    # cv2.imshow("ridam tu ap", ans)
+                    file1 = open(
+                        "./tagged/ref_pointsOfimage"
+                        + str(UploadWindow._count)
+                        + ".txt",
+                        "a",
+                    )
+                    file1.write(
+                        str(xmin)
+                        + ","
+                        + str(ymin)
+                        + ","
+                        + str(xmax)
+                        + ","
+                        + str(ymax)
+                        + "->"
+                        + text
+                        + "\n"
+                    )
+                    file1.close()
 
     def exit(self):
         self.close()
@@ -436,6 +490,7 @@ class CropWindow(QMainWindow, my_form_crop):
     def prev(self):
         self.imagename = str(np.clip(int(self.imagename), 2, None) - 1)
         pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        pixmap = pixmap.scaled(600, 450)
         self.label.setPixmap(pixmap)
         if os.path.isfile("./cropped/croppedimage" + self.imagename + ".jpg"):
             pixmap = QPixmap("./cropped/croppedimage" + self.imagename + ".jpg")
@@ -446,6 +501,7 @@ class CropWindow(QMainWindow, my_form_crop):
             np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1
         )
         pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        pixmap = pixmap.scaled(600, 450)
         self.label.setPixmap(pixmap)
         if os.path.isfile("./cropped/croppedimage" + self.imagename + ".jpg"):
             pixmap = QPixmap("./cropped/croppedimage" + self.imagename + ".jpg")
@@ -541,6 +597,7 @@ class TaggingWindow(QMainWindow, my_form_tag):
     def prev(self):
         self.imagename = str(np.clip(int(self.imagename), 2, None) - 1)
         pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        pixmap = pixmap.scaled(600, 450)
         self.label.setPixmap(pixmap)
         if os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
             pixmap = QPixmap("./tagged/taggedimage" + self.imagename + ".jpg")
@@ -554,6 +611,7 @@ class TaggingWindow(QMainWindow, my_form_tag):
             np.clip(int(self.imagename), None, UploadWindow._count - 1) + 1
         )
         pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
+        pixmap = pixmap.scaled(600, 450)
         self.label.setPixmap(pixmap)
         if os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
             pixmap = QPixmap("./tagged/taggedimage" + self.imagename + ".jpg")
@@ -564,7 +622,18 @@ class TaggingWindow(QMainWindow, my_form_tag):
         image = cv2.imread("ui.jpg")
         cv2.imwrite("./tagged/taggedimage" + self.imagename + ".jpg", image)
         file1 = open("./tagged/ref_pointsOfimage" + self.imagename + ".txt", "a")
-        file1.write(str(self.ref_point) + "\t" + self.totalTexts[-1] + "\n")
+        file1.write(
+            str((self.ref_point[0][0] - 30) * len(self.imgobj.img[0]) // 600)
+            + ","
+            + str((self.ref_point[0][1] - 280) * len(self.imgobj.img) // 450)
+            + ","
+            + str((self.ref_point[1][0] - 30) * len(self.imgobj.img[0]) // 600)
+            + ","
+            + str((self.ref_point[1][1] - 280) * len(self.imgobj.img) // 450)
+            + "->"
+            + self.totalTexts[-1]
+            + "\n"
+        )
         file1.close()
 
     def tag(self):
@@ -617,9 +686,9 @@ class TaggingWindow(QMainWindow, my_form_tag):
         ):
             return
         imgObject = Image("./images/image" + self.imagename + ".jpg")
+        self.imgobj = imgObject
         if os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
             imgObject = Image("./tagged/taggedimage" + self.imagename + ".jpg")
-
         image = cv2.resize(imgObject.img, (600, 450))
         pixmap = QPixmap("./images/image" + self.imagename + ".jpg")
         pixmap = pixmap.scaled(600, 450)
@@ -667,10 +736,11 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         super(FilteringWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("filtering")
+
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.mode = None
+
         self.pushButton.clicked.connect(self.apply_invert)
         self.pushButton_2.clicked.connect(self.apply_sepia)
         self.pushButton_3.clicked.connect(self.destroy)
@@ -785,6 +855,93 @@ class SplitWindow(QMainWindow, my_form_split):
         super(SplitWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Split")
+
+
+# fast augmentation
+class FastAugmentationWindow(QMainWindow, my_form_fast):
+    def __init__(self):
+        super(FastAugmentationWindow, self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle("fast mode")
+
+        # remove title bar
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        self.comboBox.addItems(["None", "gaussian", "speckle", "salt", "pepper", "s&p"])
+        self.comboBox_2.addItems(["None", "gaussian", "median", "bilateral"])
+        self.pushButton_8.clicked.connect(self.applyToAll)
+        self.pushButton_7.clicked.connect(self.exit)
+
+    def applyToAll(self):
+        my_file = allImagesInThisDirectory("./images")
+        # for i in range(int(self.lineEdit_8.text())):
+        #     for image in my_file:
+        # if self.lineEdit.text() != "" and self.lineEdit_2.text() != "":
+        #     image.img = cv2.resize(
+        #         image.img,
+        #         (
+        #             np.int(self.lineEdit.text()),
+        #             np.int(self.lineEdit_2.text()),
+        #         ),
+        #     )
+        # if self.lineEdit_3.text() != "" and self.lineEdit_4.text() != "":
+        #     image.rotate(
+        #         np.random.randint(
+        #             int(self.lineEdit_3.text()), int(self.lineEdit_4.text())
+        #         ),
+        #         True,
+        #     )
+        # if (
+        #     self.checkBox.isChecked() == True
+        #     and self.checkBox_2.isChecked() == True
+        # ):
+        #     x = np.random.randint(-1, 3)
+        # elif self.checkBox.isChecked() == True:
+        #     x = int(str(np.random.randint(1, 3)) + "2") % 4
+        # elif self.checkBox_2.isChecked() == True:
+        #     x = np.random.randint(1, 3)
+        # else:
+        #     x = 2
+        # if x != 2:
+        #     image.img = cv2.flip(image.img, x)
+        # image.addnoise(
+        #     self.comboBox.currentText(), np.random.randint(0, 25) / 100, True
+        # )
+        # rd = np.random.randint(15)
+        # if rd % 2 == 0:
+        #     rd += 1
+        # if self.comboBox_2.currentText() == "gaussian":
+        #     image.img = cv2.GaussianBlur(image.img, (rd, rd), 0)
+        # elif self.comboBox_2.currentText() == "median":
+        #     image.img = cv2.medianBlur(image.img, rd)
+        # elif self.comboBox_2.currentText() == "bilateral":
+        #     image.img = cv2.bilateralFilter(image.img, rd, 75, 75)
+        # if self.checkBox_5.isChecked():
+        #     image.denoise(True)
+        # if self.lineEdit_5.text() != "":
+        #     for crop in range(int(self.lineEdit_17.text())):
+        #         deltax = int(self.lineEdit_5.text()) * len(image.img[0]) // 100
+        #         deltay = int(self.lineEdit_5.text()) * len(image.img) // 100
+        #         x0 = np.random.randint(0, len(image.img[0]) - deltax + 1)
+        #         y0 = np.random.randint(0, len(image.img) - deltay + 1)
+        #         temp = image.crop((y0, y0 + deltay - 1), (x0, x0 + deltax - 1))
+        #         cv2.imwrite(
+        #             ".\images\Croppedimage"
+        #             + str(UploadWindow._count)
+        #             + "_"
+        #             + str(crop)
+        #             + ".jpg",
+        #             temp,
+        #         )
+        # UploadWindow._count += 1
+
+        # cv2.imwrite(
+        #     ".\images\image" + str(UploadWindow._count) + ".jpg", image.img
+        # )
+
+    def exit(self):
+        self.close()
 
 
 ##making treeview pretty
@@ -923,18 +1080,18 @@ class MainWindow(QMainWindow, my_form_main):
         split = StandardItem("Split", 25, color=QColor(254, 121, 199))
         tran_test_split.appendRow(split)
 
-        generate = StandardItem(
-            "Generate", 35, color=QColor(96, 100, 152), set_bold=True
+        fast = StandardItem("Fast Mode", 35, color=QColor(96, 100, 152), set_bold=True)
+        fastAugmentation = StandardItem(
+            "Fast Augmentation", 25, color=QColor(254, 121, 199)
         )
-        ready = StandardItem("Ready", 25, color=QColor(254, 121, 199))
-        generate.appendRow(ready)
+        fast.appendRow(fastAugmentation)
 
         rootNode.appendRow(source_images)
         rootNode.appendRow(annotate)
         rootNode.appendRow(preprocessing)
         rootNode.appendRow(augmentation)
         rootNode.appendRow(tran_test_split)
-        rootNode.appendRow(generate)
+        rootNode.appendRow(fast)
 
         treeView.setModel(treeModel)
         treeView.expandAll()
@@ -988,6 +1145,10 @@ class MainWindow(QMainWindow, my_form_main):
             print(val.data())
             self.split = SplitWindow()
             self.split.show()
+        if val.data() == "Fast Augmentation":
+            print(val.data())
+            self.fastAugmentation = FastAugmentationWindow()
+            self.fastAugmentation.show()
 
 
 ## splash screen
@@ -1009,7 +1170,7 @@ class SplashScreen(QMainWindow, my_form_SplashScreen):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.progress)
         ##timer in ms
-        self.timer.start(1)
+        self.timer.start(10)
         # change description
         self.label_description.setText("<strong>WELCOME</strong> TO OUR APPLICATION")
         QtCore.QTimer.singleShot(
@@ -1042,5 +1203,3 @@ app = QApplication([])
 w = SplashScreen()
 w.show()
 sys.exit(app.exec_())
-
-
