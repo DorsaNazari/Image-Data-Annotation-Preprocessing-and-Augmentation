@@ -18,6 +18,7 @@ from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.Qt import QStandardItemModel
 import matplotlib
+from numpy import random
 
 matplotlib.use("Qt5Agg")
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -875,70 +876,89 @@ class FastAugmentationWindow(QMainWindow, my_form_fast):
 
     def applyToAll(self):
         my_file = allImagesInThisDirectory("./images")
-        # for i in range(int(self.lineEdit_8.text())):
-        #     for image in my_file:
-        # if self.lineEdit.text() != "" and self.lineEdit_2.text() != "":
-        #     image.img = cv2.resize(
-        #         image.img,
-        #         (
-        #             np.int(self.lineEdit.text()),
-        #             np.int(self.lineEdit_2.text()),
-        #         ),
-        #     )
-        # if self.lineEdit_3.text() != "" and self.lineEdit_4.text() != "":
-        #     image.rotate(
-        #         np.random.randint(
-        #             int(self.lineEdit_3.text()), int(self.lineEdit_4.text())
-        #         ),
-        #         True,
-        #     )
-        # if (
-        #     self.checkBox.isChecked() == True
-        #     and self.checkBox_2.isChecked() == True
-        # ):
-        #     x = np.random.randint(-1, 3)
-        # elif self.checkBox.isChecked() == True:
-        #     x = int(str(np.random.randint(1, 3)) + "2") % 4
-        # elif self.checkBox_2.isChecked() == True:
-        #     x = np.random.randint(1, 3)
-        # else:
-        #     x = 2
-        # if x != 2:
-        #     image.img = cv2.flip(image.img, x)
-        # image.addnoise(
-        #     self.comboBox.currentText(), np.random.randint(0, 25) / 100, True
-        # )
-        # rd = np.random.randint(15)
-        # if rd % 2 == 0:
-        #     rd += 1
-        # if self.comboBox_2.currentText() == "gaussian":
-        #     image.img = cv2.GaussianBlur(image.img, (rd, rd), 0)
-        # elif self.comboBox_2.currentText() == "median":
-        #     image.img = cv2.medianBlur(image.img, rd)
-        # elif self.comboBox_2.currentText() == "bilateral":
-        #     image.img = cv2.bilateralFilter(image.img, rd, 75, 75)
-        # if self.checkBox_5.isChecked():
-        #     image.denoise(True)
-        # if self.lineEdit_5.text() != "":
-        #     for crop in range(int(self.lineEdit_17.text())):
-        #         deltax = int(self.lineEdit_5.text()) * len(image.img[0]) // 100
-        #         deltay = int(self.lineEdit_5.text()) * len(image.img) // 100
-        #         x0 = np.random.randint(0, len(image.img[0]) - deltax + 1)
-        #         y0 = np.random.randint(0, len(image.img) - deltay + 1)
-        #         temp = image.crop((y0, y0 + deltay - 1), (x0, x0 + deltax - 1))
-        #         cv2.imwrite(
-        #             ".\images\Croppedimage"
-        #             + str(UploadWindow._count)
-        #             + "_"
-        #             + str(crop)
-        #             + ".jpg",
-        #             temp,
-        #         )
-        # UploadWindow._count += 1
+        if self.lineEdit_8.text() != "":
+            for i in range(int(self.lineEdit_8.text())):
+                for image in my_file:
+                    if self.lineEdit.text() != "" and self.lineEdit_2.text() != "":
+                        image.img = cv2.resize(
+                            image.img,
+                            (
+                                np.int(self.lineEdit.text()),
+                                np.int(self.lineEdit_2.text()),
+                            ),
+                        )
+                    if self.lineEdit_6.text() != "" and self.lineEdit_7.text() != "":
+                        image.adjustBrightness(
+                            1
+                            + (
+                                np.random.randint(
+                                    int(self.lineEdit_7.text()),
+                                    int(self.lineEdit_6.text()),
+                                )
+                                / 100
+                            ),
+                            True,
+                        )
+                    if self.lineEdit_3.text() != "" and self.lineEdit_4.text() != "":
+                        image.rotate(
+                            np.random.randint(
+                                int(self.lineEdit_3.text()), int(self.lineEdit_4.text())
+                            ),
+                            True,
+                        )
+                    if (
+                        self.checkBox.isChecked() == True
+                        and self.checkBox_2.isChecked() == True
+                    ):
+                        x = np.random.randint(-1, 3)
+                    elif self.checkBox.isChecked() == True:
+                        x = int(str(np.random.randint(1, 3)) + "2") % 4
+                    elif self.checkBox_2.isChecked() == True:
+                        x = np.random.randint(1, 3)
+                    else:
+                        x = 2
+                    if x != 2:
+                        image.img = cv2.flip(image.img, x)
+                    image.addnoise(
+                        self.comboBox.currentText(),
+                        np.random.randint(0, 25) / 100,
+                        True,
+                    )
+                    rd = np.random.randint(15)
+                    if rd % 2 == 0:
+                        rd += 1
+                    if self.comboBox_2.currentText() == "gaussian":
+                        image.img = cv2.GaussianBlur(image.img, (rd, rd), 0)
+                    elif self.comboBox_2.currentText() == "median":
+                        image.img = cv2.medianBlur(image.img, rd)
+                    elif self.comboBox_2.currentText() == "bilateral":
+                        image.img = cv2.bilateralFilter(image.img, rd, 75, 75)
+                    if self.checkBox_5.isChecked():
+                        image.denoise(True)
+                    UploadWindow._count += 1
+                    if self.lineEdit_5.text() != "":
+                        for crop in range(int(self.lineEdit_17.text())):
+                            deltax = (
+                                int(self.lineEdit_5.text()) * len(image.img[0]) // 100
+                            )
+                            deltay = int(self.lineEdit_5.text()) * len(image.img) // 100
+                            x0 = np.random.randint(0, len(image.img[0]) - deltax + 1)
+                            y0 = np.random.randint(0, len(image.img) - deltay + 1)
+                            temp = image.crop(
+                                (y0, y0 + deltay - 1), (x0, x0 + deltax - 1)
+                            )
+                            cv2.imwrite(
+                                ".\images\Croppedimage"
+                                + str(UploadWindow._count)
+                                + "_"
+                                + str(crop)
+                                + ".jpg",
+                                temp,
+                            )
 
-        # cv2.imwrite(
-        #     ".\images\image" + str(UploadWindow._count) + ".jpg", image.img
-        # )
+                    cv2.imwrite(
+                        ".\images\image" + str(UploadWindow._count) + ".jpg", image.img
+                    )
 
     def exit(self):
         self.close()
