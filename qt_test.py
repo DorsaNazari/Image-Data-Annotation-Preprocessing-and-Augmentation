@@ -793,6 +793,26 @@ class TaggingWindow(QMainWindow, my_form_tag):
         self.label.setPixmap(pixmap)
         if os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
             pixmap = QPixmap("./tagged/taggedimage" + self.imagename + ".jpg")
+        elif os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
+            pixmap = QPixmap("./tagged/taggedimage" + self.imagename + ".jpg")
+            # convert image file into pixmap
+            self.pixmap_image = QtGui.QPixmap(self.filename)
+
+            # create painter instance with pixmap
+            self.painterInstance = QtGui.QPainter(self.pixmap_image)
+
+            # set rectangle color and thickness
+            self.penRectangle = QtGui.QPen(QtCore.Qt.red)
+            self.penRectangle.setWidth(3)
+
+            # draw rectangle on painter
+            self.painterInstance.setPen(self.penRectangle)
+            self.painterInstance.drawRect(xPos,yPos,xLen,yLen)
+
+            # set pixmap onto the label widget
+            self.ui.label_imageDisplay.setPixmap(self.pixmap_image)
+            self.ui.label_imageDisplay.show()
+            
         pixmap = pixmap.scaled(600, 450)
         self.label_2.setPixmap(pixmap)
         self.lineEdit.hide()
