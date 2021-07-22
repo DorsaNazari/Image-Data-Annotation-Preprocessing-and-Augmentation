@@ -36,10 +36,10 @@
       <widget class="QPushButton" name="pushButton">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>100</y>
-         <width>105</width>
-         <height>31</height>
+         <x>210</x>
+         <y>110</y>
+         <width>101</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
@@ -59,10 +59,10 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QPushButton" name="pushButton_2">
        <property name="geometry">
         <rect>
-         <x>210</x>
-         <y>100</y>
-         <width>105</width>
-         <height>31</height>
+         <x>330</x>
+         <y>110</y>
+         <width>101</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
@@ -84,7 +84,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
         <rect>
          <x>30</x>
          <y>20</y>
-         <width>161</width>
+         <width>221</width>
          <height>51</height>
         </rect>
        </property>
@@ -105,28 +105,34 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>430</x>
+         <x>370</x>
          <y>40</y>
-         <width>191</width>
-         <height>31</height>
+         <width>401</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>20</pointsize>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
        <property name="styleSheet">
         <string notr="true">color:rgb(254,121,199);</string>
        </property>
        <property name="text">
-        <string>Click On filter</string>
+        <string>Filter to help your model be
+ more resilient</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="label_3">
        <property name="geometry">
         <rect>
-         <x>10</x>
+         <x>20</x>
          <y>160</y>
          <width>601</width>
          <height>511</height>
@@ -142,11 +148,14 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QLabel" name="label_filtering">
        <property name="geometry">
         <rect>
-         <x>620</x>
-         <y>160</y>
-         <width>601</width>
-         <height>511</height>
+         <x>640</x>
+         <y>190</y>
+         <width>571</width>
+         <height>451</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(102, 106, 161);</string>
        </property>
        <property name="text">
         <string/>
@@ -155,10 +164,10 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QPushButton" name="pushButton_3">
        <property name="geometry">
         <rect>
-         <x>390</x>
-         <y>100</y>
-         <width>105</width>
-         <height>31</height>
+         <x>442</x>
+         <y>110</y>
+         <width>91</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
@@ -178,10 +187,10 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QPushButton" name="pushButton_4">
        <property name="geometry">
         <rect>
-         <x>550</x>
-         <y>100</y>
-         <width>105</width>
-         <height>31</height>
+         <x>540</x>
+         <y>110</y>
+         <width>91</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
@@ -200,10 +209,10 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QPushButton" name="pushButton_5">
        <property name="geometry">
         <rect>
-         <x>700</x>
-         <y>100</y>
-         <width>105</width>
-         <height>31</height>
+         <x>640</x>
+         <y>110</y>
+         <width>91</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
@@ -222,10 +231,10 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QPushButton" name="pushButton_6">
        <property name="geometry">
         <rect>
-         <x>860</x>
-         <y>100</y>
-         <width>105</width>
-         <height>31</height>
+         <x>740</x>
+         <y>110</y>
+         <width>91</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
@@ -244,10 +253,10 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QPushButton" name="pushButton_7">
        <property name="geometry">
         <rect>
-         <x>1020</x>
-         <y>100</y>
-         <width>105</width>
-         <height>31</height>
+         <x>840</x>
+         <y>110</y>
+         <width>91</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
