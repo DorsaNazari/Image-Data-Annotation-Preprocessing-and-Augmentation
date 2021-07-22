@@ -27,7 +27,6 @@ from time import sleep
 from image import Image
 from funcs import allImagesInThisDirectory, allImagesInThisDirectory2, eazyCrop, label
 import cv2
-import random
 
 
 my_form_SplashScreen = uic.loadUiType(os.path.join(os.getcwd(), "first.ui"))[0]
@@ -65,6 +64,7 @@ class UploadWindow(QMainWindow, my_form_upload):
 
     def browseImages(self):
         imagePath = QFileDialog.getExistingDirectory(self, "Select file")
+        # print(imagePath)
         list_of_images_directory = allImagesInThisDirectory2(imagePath)
         l = len(list_of_images_directory)
         if l == 0:
@@ -106,12 +106,12 @@ class FlipWindow(QMainWindow, my_form_flip):
         # self.checkBox_v.stateChanged.connect(self.state_changed)
         self.pushButton.clicked.connect(self.state_changed )
         self.pushButton_4.clicked.connect(self.exit)
+        self.pushButton_5.clicked.connect(self.applyToAll)
 
     def exit(self):
         self.close()
 
     def state_changed(self, int):
-
         src = cv2.imread("1.jpg")
         imgObject = Image("./images/image" + self.imagename + ".jpg")
         image = cv2.resize(imgObject.img, (550, 350))
@@ -120,13 +120,13 @@ class FlipWindow(QMainWindow, my_form_flip):
 
         if not(self.checkBox_h.isChecked() & self.checkBox_v.isChecked()):
             self.label_fliped_image.setText(" ")
-        if self.checkBox_v.isChecked():
+        if self.checkBox_v.isChecked() and not(self.checkBox_h.isChecked()):
             img = cv2.flip(src, 0)
             cv2.imwrite("my.png", img)
             pixmap = QtGui.QPixmap('my.png')
             self.label_fliped_image.setPixmap(pixmap)
             self.label_fliped_image.show()
-        if self.checkBox_h.isChecked():
+        if self.checkBox_h.isChecked() and not(self.checkBox_v.isChecked()):
             img = cv2.flip(src, 1)
             cv2.imwrite("my.png", img)
             pixmap = QtGui.QPixmap('my.png')
@@ -138,6 +138,22 @@ class FlipWindow(QMainWindow, my_form_flip):
             pixmap = QtGui.QPixmap('my.png')
             self.label_fliped_image.setPixmap(pixmap)
             self.label_fliped_image.show()
+
+    def applyToAll(self):
+        my_list = allImagesInThisDirectory("./images")
+        for src in my_list:
+            if self.checkBox_h.isChecked() and self.checkBox_v.isChecked():
+                img = cv2.flip(src.img, -1)
+                UploadWindow._count += 1
+                cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", img)
+            if self.checkBox_v.isChecked() and not(self.checkBox_h.isChecked()):
+                img = cv2.flip(src.img, 0)
+                UploadWindow._count += 1
+                cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", img)
+            if self.checkBox_h.isChecked() and not(self.checkBox_v.isChecked()):
+                img = cv2.flip(src.img, 1)
+                UploadWindow._count += 1
+                cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", img)
 
 
 ## resize window
@@ -159,6 +175,8 @@ class ResizeWindow(QMainWindow, my_form_resize):
 
         self.pushButton.clicked.connect(self.state_changed )
         self.pushButton_4.clicked.connect(self.exit)
+        self.pushButton_5.clicked.connect(self.applyToAll)
+
 
     def exit(self):
         self.close()
@@ -171,10 +189,10 @@ class ResizeWindow(QMainWindow, my_form_resize):
         imgObject = Image("./images/image" + self.imagename + ".jpg")
         image = cv2.resize(imgObject.img, (550, 350))
 
-        im=cv2.imwrite("my.jpg", image)
+        cv2.imwrite("my.jpg", image)
         src = cv2.imread("my.jpg")
-        height = np.int(src.shape[0] * h / 100)
-        width = np.int(src.shape[1] * w / 100)
+        height = np.int64(src.shape[0] * h / 100)
+        width = np.int64(src.shape[1] * w / 100)
         dim = (width, height)
   
         img = cv2.resize(src, dim, interpolation = cv2.INTER_AREA)
@@ -183,6 +201,19 @@ class ResizeWindow(QMainWindow, my_form_resize):
         self.label_resized_image.setPixmap(pixmap)
         self.label_resized_image.setAlignment(QtCore.Qt.AlignCenter)
         self.label_resized_image.show()
+
+    def applyToAll(self):
+        my_list = allImagesInThisDirectory("./images")
+        for src in my_list:
+            # img = cv2.flip(src.img, -1)
+            h = np.int64(float(self.height.text()))
+            w = np.int64(float(self.width.text()))
+            height = np.int64(src.img.shape[0] * h / 100)
+            width = np.int64(src.img.shape[1] * w / 100)
+            dim = (width, height)
+            img = cv2.resize(src.img, dim, interpolation = cv2.INTER_AREA)
+            UploadWindow._count += 1
+            cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", img)
 
 
 # brightness window
@@ -727,64 +758,6 @@ class SplitWindow(QMainWindow, my_form_split):
         self.setupUi(self)
         self.setWindowTitle("Split")
 
-        # remove title bar
-        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-
-        imagePath = ".\images"
-        list_of_images_directory = allImagesInThisDirectory2(imagePath)
-        self.num =  len(list_of_images_directory)
-        if self.num == 0:
-            self.label_3.setText("You did not upload images!")
-        self.label.setText(f"{self.num}")
-        self.ch = 0
-        self.Enter.clicked.connect(self.enter_pressed)
-        self.OK_Button.clicked.connect(self.OK_pressed)
-        self.pushButton_4.clicked.connect(self.exit)
-
-    def exit(self):
-        self.close()
-        
-
-    def enter_pressed(self):
-        if self.lineEdit.text() != '':
-            self.ch = 1
-            pTrain = float(self.lineEdit.text())
-            if pTrain>100 or pTrain<0 :
-                self.label_3.setText("it is not percentage!")
-            else:
-                self.label_3.clear()
-                self.train = int(pTrain * self.num /100)
-                self.label_4.setText(f"The Split data number is :     {self.train} images for Train\n\t\t\t {self.num - self.train} images for Test\n\t\t\t  is it OK ?")
-            
-    
-    def OK_pressed(self):
-        if self.ch == 0:
-            self.label_3.setText("First Press Enter!")
-        else:
-            self.Trainlist = random.sample(range(1,self.num), self.train)
-            self.doSplit()
-            self.close()
-
-
-    def doSplit(self):
-        list_of_images_directory = allImagesInThisDirectory2(".\images")
-        j = k = 1
-        for i in range(len(list_of_images_directory)):
-            pixmap = QPixmap(list_of_images_directory[i])
-            if i in self.Trainlist:
-                pixmap.save(f".\splitData\Train\image{j}.jpg")
-                j+=1
-            else:
-                pixmap.save(f".\splitData\Test\image{k}.jpg")
-                k+=1
-                
-            
-                
-
-
-
-
 
 ##making treeview pretty
 class StandardItem(QStandardItem, my_form_main):
@@ -1008,11 +981,11 @@ class SplashScreen(QMainWindow, my_form_SplashScreen):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.progress)
         ##timer in ms
-        self.timer.start(35)
+        self.timer.start(1)
         # change description
         self.label_description.setText("<strong>WELCOME</strong> TO OUR APPLICATION")
         QtCore.QTimer.singleShot(
-            3000,
+            500,
             lambda: self.label_description.setText(" PREPROCESSING AND AUGMENTATION "),
         )
 
