@@ -187,7 +187,7 @@ color: rgb(165, 167, 255);</string>
       <widget class="QPushButton" name="pushButton">
        <property name="geometry">
         <rect>
-         <x>870</x>
+         <x>770</x>
          <y>580</y>
          <width>93</width>
          <height>31</height>
@@ -203,6 +203,27 @@ color: rgb(165, 167, 255);</string>
        </property>
        <property name="text">
         <string>Apply</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="geometry">
+        <rect>
+         <x>870</x>
+         <y>580</y>
+         <width>93</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop:0 rgba(254, 121, 199, 255), stop:1 rgba(170, 85, 255, 255));</string>
+       </property>
+       <property name="text">
+        <string>Apply to all</string>
        </property>
       </widget>
      </widget>
