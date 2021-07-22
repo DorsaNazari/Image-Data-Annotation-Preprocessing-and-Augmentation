@@ -18,8 +18,7 @@ from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.Qt import QStandardItemModel
 import matplotlib
-from numpy import random
-
+import random
 matplotlib.use("Qt5Agg")
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
@@ -198,8 +197,8 @@ class ResizeWindow(QMainWindow, my_form_resize):
 
         im = cv2.imwrite("my.jpg", image)
         src = cv2.imread("my.jpg")
-        height = np.int(src.shape[0] * h / 100)
-        width = np.int(src.shape[1] * w / 100)
+        height = np.int64(src.shape[0] * h / 100)
+        width = np.int64(src.shape[1] * w / 100)
         dim = (width, height)
 
         img = cv2.resize(src, dim, interpolation=cv2.INTER_AREA)
@@ -211,6 +210,7 @@ class ResizeWindow(QMainWindow, my_form_resize):
 
     def applyToAll(self):
         my_list = allImagesInThisDirectory("./images")
+        t = 0
         for src in my_list:
             # img = cv2.flip(src.img, -1)
             h = np.int64(float(self.height.text()))
@@ -221,6 +221,41 @@ class ResizeWindow(QMainWindow, my_form_resize):
             img = cv2.resize(src.img, dim, interpolation=cv2.INTER_AREA)
             UploadWindow._count += 1
             cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", img)
+            
+            t += 1
+            origin = (((len(src.img[0]) - 1) // 2), ((len(src.img) - 1) // 2))
+            if os.path.isfile("./tagged/ref_pointsOfimage" + str(t) + ".txt"):
+                file1 = open("./tagged/ref_pointsOfimage" + str(t) + ".txt", "r")
+                lines = file1.read().split("\n")
+                file1.close()
+                for line in lines:
+                    if line == "":
+                        continue
+                    points, text = line.split("->")
+                    x0, y0, xp0, yp0 = points.split(",")
+                    x1 = int(x0) *w / 100
+                    x2 = int(xp0) * w / 100
+                    y1 = int(y0) * h / 100
+                    y2 = int(yp0) * h / 100
+                    file1 = open(
+                        "./tagged/ref_pointsOfimage"
+                        + str(UploadWindow._count)
+                        + ".txt",
+                        "a",
+                    )
+                    file1.write(
+                        str(x1)
+                        + ","
+                        + str(y1)
+                        + ","
+                        + str(x2)
+                        + ","
+                        + str(y2)
+                        + "->"
+                        + text
+                        + "\n"
+                    )
+                    file1.close()
 
 
 # brightness window
@@ -857,6 +892,58 @@ class SplitWindow(QMainWindow, my_form_split):
         self.setupUi(self)
         self.setWindowTitle("Split")
 
+        # remove title bar
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        imagePath = ".\images"
+        list_of_images_directory = allImagesInThisDirectory2(imagePath)
+        self.num =  len(list_of_images_directory)
+        if self.num == 0:
+            self.label_3.setText("You did not upload images!")
+        self.label.setText(f"{self.num}")
+        self.ch = 0
+        self.Enter.clicked.connect(self.enter_pressed)
+        self.OK_Button.clicked.connect(self.OK_pressed)
+        self.pushButton_4.clicked.connect(self.exit)
+
+    def exit(self):
+        self.close()
+        
+
+    def enter_pressed(self):
+        if self.lineEdit.text() != '':
+            self.ch = 1
+            pTrain = float(self.lineEdit.text())
+            if pTrain>100 or pTrain<0 :
+                self.label_3.setText("it is not percentage!")
+            else:
+                self.label_3.clear()
+                self.train = int(pTrain * self.num /100)
+                self.label_4.setText(f"The Split data number is :     {self.train} images for Train\n\t\t\t {self.num - self.train} images for Test\n\t\t\t  is it OK ?")
+            
+    
+    def OK_pressed(self):
+        if self.ch == 0:
+            self.label_3.setText("First Press Enter!")
+        else:
+            self.Trainlist = random.sample(range(1,self.num), self.train)
+            self.doSplit()
+            self.close()
+
+
+    def doSplit(self):
+        list_of_images_directory = allImagesInThisDirectory2(".\images")
+        j = k = 1
+        for i in range(len(list_of_images_directory)):
+            pixmap = QPixmap(list_of_images_directory[i])
+            if i in self.Trainlist:
+                pixmap.save(f".\splitData\Train\image{j}.jpg")
+                j+=1
+            else:
+                pixmap.save(f".\splitData\Test\image{k}.jpg")
+                k+=1
+
 
 # fast augmentation
 class FastAugmentationWindow(QMainWindow, my_form_fast):
@@ -876,89 +963,70 @@ class FastAugmentationWindow(QMainWindow, my_form_fast):
 
     def applyToAll(self):
         my_file = allImagesInThisDirectory("./images")
-        if self.lineEdit_8.text() != "":
-            for i in range(int(self.lineEdit_8.text())):
-                for image in my_file:
-                    if self.lineEdit.text() != "" and self.lineEdit_2.text() != "":
-                        image.img = cv2.resize(
-                            image.img,
-                            (
-                                np.int(self.lineEdit.text()),
-                                np.int(self.lineEdit_2.text()),
-                            ),
-                        )
-                    if self.lineEdit_6.text() != "" and self.lineEdit_7.text() != "":
-                        image.adjustBrightness(
-                            1
-                            + (
-                                np.random.randint(
-                                    int(self.lineEdit_7.text()),
-                                    int(self.lineEdit_6.text()),
-                                )
-                                / 100
-                            ),
-                            True,
-                        )
-                    if self.lineEdit_3.text() != "" and self.lineEdit_4.text() != "":
-                        image.rotate(
-                            np.random.randint(
-                                int(self.lineEdit_3.text()), int(self.lineEdit_4.text())
-                            ),
-                            True,
-                        )
-                    if (
-                        self.checkBox.isChecked() == True
-                        and self.checkBox_2.isChecked() == True
-                    ):
-                        x = np.random.randint(-1, 3)
-                    elif self.checkBox.isChecked() == True:
-                        x = int(str(np.random.randint(1, 3)) + "2") % 4
-                    elif self.checkBox_2.isChecked() == True:
-                        x = np.random.randint(1, 3)
-                    else:
-                        x = 2
-                    if x != 2:
-                        image.img = cv2.flip(image.img, x)
-                    image.addnoise(
-                        self.comboBox.currentText(),
-                        np.random.randint(0, 25) / 100,
-                        True,
-                    )
-                    rd = np.random.randint(15)
-                    if rd % 2 == 0:
-                        rd += 1
-                    if self.comboBox_2.currentText() == "gaussian":
-                        image.img = cv2.GaussianBlur(image.img, (rd, rd), 0)
-                    elif self.comboBox_2.currentText() == "median":
-                        image.img = cv2.medianBlur(image.img, rd)
-                    elif self.comboBox_2.currentText() == "bilateral":
-                        image.img = cv2.bilateralFilter(image.img, rd, 75, 75)
-                    if self.checkBox_5.isChecked():
-                        image.denoise(True)
-                    UploadWindow._count += 1
-                    if self.lineEdit_5.text() != "":
-                        for crop in range(int(self.lineEdit_17.text())):
-                            deltax = (
-                                int(self.lineEdit_5.text()) * len(image.img[0]) // 100
-                            )
-                            deltay = int(self.lineEdit_5.text()) * len(image.img) // 100
-                            x0 = np.random.randint(0, len(image.img[0]) - deltax + 1)
-                            y0 = np.random.randint(0, len(image.img) - deltay + 1)
-                            temp = image.crop(
-                                (y0, y0 + deltay - 1), (x0, x0 + deltax - 1)
-                            )
-                            cv2.imwrite(
-                                ".\images\Croppedimage"
-                                + str(UploadWindow._count)
-                                + "_"
-                                + str(crop)
-                                + ".jpg",
-                                temp,
-                            )
+        # for i in range(int(self.lineEdit_8.text())):
+        #     for image in my_file:
+        # if self.lineEdit.text() != "" and self.lineEdit_2.text() != "":
+        #     image.img = cv2.resize(
+        #         image.img,
+        #         (
+        #             np.int(self.lineEdit.text()),
+        #             np.int(self.lineEdit_2.text()),
+        #         ),
+        #     )
+        # if self.lineEdit_3.text() != "" and self.lineEdit_4.text() != "":
+        #     image.rotate(
+        #         np.random.randint(
+        #             int(self.lineEdit_3.text()), int(self.lineEdit_4.text())
+        #         ),
+        #         True,
+        #     )
+        # if (
+        #     self.checkBox.isChecked() == True
+        #     and self.checkBox_2.isChecked() == True
+        # ):
+        #     x = np.random.randint(-1, 3)
+        # elif self.checkBox.isChecked() == True:
+        #     x = int(str(np.random.randint(1, 3)) + "2") % 4
+        # elif self.checkBox_2.isChecked() == True:
+        #     x = np.random.randint(1, 3)
+        # else:
+        #     x = 2
+        # if x != 2:
+        #     image.img = cv2.flip(image.img, x)
+        # image.addnoise(
+        #     self.comboBox.currentText(), np.random.randint(0, 25) / 100, True
+        # )
+        # rd = np.random.randint(15)
+        # if rd % 2 == 0:
+        #     rd += 1
+        # if self.comboBox_2.currentText() == "gaussian":
+        #     image.img = cv2.GaussianBlur(image.img, (rd, rd), 0)
+        # elif self.comboBox_2.currentText() == "median":
+        #     image.img = cv2.medianBlur(image.img, rd)
+        # elif self.comboBox_2.currentText() == "bilateral":
+        #     image.img = cv2.bilateralFilter(image.img, rd, 75, 75)
+        # if self.checkBox_5.isChecked():
+        #     image.denoise(True)
+        # if self.lineEdit_5.text() != "":
+        #     for crop in range(int(self.lineEdit_17.text())):
+        #         deltax = int(self.lineEdit_5.text()) * len(image.img[0]) // 100
+        #         deltay = int(self.lineEdit_5.text()) * len(image.img) // 100
+        #         x0 = np.random.randint(0, len(image.img[0]) - deltax + 1)
+        #         y0 = np.random.randint(0, len(image.img) - deltay + 1)
+        #         temp = image.crop((y0, y0 + deltay - 1), (x0, x0 + deltax - 1))
+        #         cv2.imwrite(
+        #             ".\images\Croppedimage"
+        #             + str(UploadWindow._count)
+        #             + "_"
+        #             + str(crop)
+        #             + ".jpg",
+        #             temp,
+        #         )
+        # UploadWindow._count += 1
 
-                    cv2.imwrite(
-                        ".\images\image" + str(UploadWindow._count) + ".jpg", image.img
-                    )
+        # cv2.imwrite(
+        #     ".\images\image" + str(UploadWindow._count) + ".jpg", image.img
+        # )
 
     def exit(self):
         self.close()
