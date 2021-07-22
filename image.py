@@ -94,7 +94,7 @@ class Image:
     def grayScale(self):
         gray = self.img.copy()
         gray = gray.astype(np.float)
-        gray[:, :, 0] = gray[:, :, 1] = gray[:, :, 2] = 1.5 * np.mean(imgObject, 2)
+        gray[:, :, 0] = gray[:, :, 1] = gray[:, :, 2] = 1.5 * np.mean(gray, 2)
         gray[gray > 255] = 255
         gray = gray.astype(np.uint8)
         return gray
