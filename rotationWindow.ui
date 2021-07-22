@@ -40,7 +40,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>10</y>
+         <y>60</y>
          <width>241</width>
          <height>201</height>
         </rect>
@@ -55,8 +55,8 @@
       <widget class="QLabel" name="label_desqription">
        <property name="geometry">
         <rect>
-         <x>290</x>
-         <y>40</y>
+         <x>300</x>
+         <y>70</y>
          <width>301</width>
          <height>51</height>
         </rect>
@@ -72,7 +72,8 @@
         <string notr="true">color:rgb(254,121,199);</string>
        </property>
        <property name="text">
-        <string>Rotate</string>
+        <string>Add variability to rotations 
+to help your model be more resilient to </string>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
@@ -100,8 +101,8 @@
       <widget class="QSlider" name="horizontalSlider">
        <property name="geometry">
         <rect>
-         <x>280</x>
-         <y>110</y>
+         <x>290</x>
+         <y>170</y>
          <width>321</width>
          <height>22</height>
         </rect>
@@ -170,6 +171,35 @@
        </property>
        <property name="text">
         <string>Apply to all</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_desqription_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>10</y>
+         <width>191</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>20</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:rgb(123, 129, 195);</string>
+       </property>
+       <property name="text">
+        <string>Rotation</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </widget>
