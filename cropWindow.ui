@@ -39,8 +39,8 @@
       <widget class="QLabel" name="label_desqription">
        <property name="geometry">
         <rect>
-         <x>740</x>
-         <y>180</y>
+         <x>760</x>
+         <y>200</y>
          <width>381</width>
          <height>51</height>
         </rect>
@@ -56,7 +56,7 @@
         <string notr="true">color:rgb(254,121,199);</string>
        </property>
        <property name="text">
-        <string>Croped</string>
+        <string>Cropped</string>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
@@ -147,8 +147,8 @@
       <widget class="QLabel" name="label_desqription_2">
        <property name="geometry">
         <rect>
-         <x>130</x>
-         <y>180</y>
+         <x>90</x>
+         <y>200</y>
          <width>381</width>
          <height>51</height>
         </rect>
@@ -247,6 +247,37 @@
        </property>
        <property name="text">
         <string>Apply</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_desqription_4">
+       <property name="geometry">
+        <rect>
+         <x>430</x>
+         <y>110</y>
+         <width>381</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:rgb(254,121,199);</string>
+       </property>
+       <property name="text">
+        <string>Add variability to positioning and size 
+to help your model be more resilient 
+to subject translations and camera position.</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </widget>
