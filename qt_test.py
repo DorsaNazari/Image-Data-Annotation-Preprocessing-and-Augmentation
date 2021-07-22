@@ -1,5 +1,5 @@
 import os
-import glob
+import shutil
 import sys
 from typing import Counter
 from PyQt5.QtGui import QColor, QFont, QStandardItemModel, QStandardItem, QIcon, QPixmap
@@ -66,7 +66,6 @@ class UploadWindow(QMainWindow, my_form_upload):
 
     def browseImages(self):
         imagePath = QFileDialog.getExistingDirectory(self, "Select file")
-        # print(imagePath)
         list_of_images_directory = allImagesInThisDirectory2(imagePath)
         l = len(list_of_images_directory)
         if l == 0:
@@ -190,8 +189,6 @@ class FlipWindow(QMainWindow, my_form_flip):
                     ymin = min(y0, yp0)
                     xmax = max(x0, xp0)
                     ymax = max(y0, yp0)
-                    # cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (255, 0, 255), 2)
-                    # cv2.imshow("ridam tu ap", img)
                     file1 = open(
                         "./tagged/ref_pointsOfimage"
                         + str(UploadWindow._count)
@@ -292,8 +289,6 @@ class ResizeWindow(QMainWindow, my_form_resize):
                     ymin = min(y2, y1)
                     xmax = max(x2, x1)
                     ymax = max(y2, y1)
-                    # cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (255, 0, 255), 2)
-                    # cv2.imshow("ridam tu ap", img)
                     file1 = open(
                         "./tagged/ref_pointsOfimage"
                         + str(UploadWindow._count)
@@ -350,8 +345,6 @@ class BrightnessWindow(QMainWindow, my_form_brightness):
                     ymin = min(y0, yp0)
                     xmax = max(x0, xp0)
                     ymax = max(y0, yp0)
-                    # cv2.rectangle(ans, (xmin, ymin), (xmax, ymax), (255, 0, 255), 2)
-                    # cv2.imshow("ridam tu ap", ans)
                     file1 = open(
                         "./tagged/ref_pointsOfimage"
                         + str(UploadWindow._count)
@@ -431,8 +424,6 @@ class RotationWindow(QMainWindow, my_form_rotation):
                         xmax = len(img.img[0]) - 1
                     if ymax >= len(img.img):
                         ymax = len(img.img) - 1
-                    # cv2.rectangle(ans, (xmin, ymin), (xmax, ymax), (255, 0, 255), 2)
-                    # cv2.imshow("ridam tu ap", ans)
                     file1 = open(
                         "./tagged/ref_pointsOfimage"
                         + str(UploadWindow._count)
@@ -509,8 +500,6 @@ class NoiseWindow(QMainWindow, my_form_noise):
                     ymin = min(y0, yp0)
                     xmax = max(x0, xp0)
                     ymax = max(y0, yp0)
-                    # cv2.rectangle(ans, (xmin, ymin), (xmax, ymax), (255, 0, 255), 2)
-                    # cv2.imshow("ridam tu ap", ans)
                     file1 = open(
                         "./tagged/ref_pointsOfimage"
                         + str(UploadWindow._count)
@@ -622,8 +611,6 @@ class BlurringWindow(QMainWindow, my_form_blurring):
                     ymin = min(y0, yp0)
                     xmax = max(x0, xp0)
                     ymax = max(y0, yp0)
-                    cv2.rectangle(ans, (xmin, ymin), (xmax, ymax), (255, 0, 255), 2)
-                    cv2.imshow("ridam tu ap", ans)
                     file1 = open(
                         "./tagged/ref_pointsOfimage"
                         + str(UploadWindow._count)
@@ -1019,7 +1006,6 @@ class FilteringWindow(QMainWindow, my_form_filtering):
 
     def apply_invert(self):
         self.mode = "i"
-        print(self.mode)
         imgObject = cv2.imread("2.jpg")
         cv2.imwrite("ui.jpg", cv2.bitwise_not(imgObject))
         pixmap = QPixmap("ui.jpg")
@@ -1415,51 +1401,39 @@ class MainWindow(QMainWindow, my_form_main):
 
     def action(self, val):
         if val.data() == "Upload":
-            print(val.data())
             self.flip = UploadWindow()
             self.flip.show()
         if val.data() == "Flip":
-            print(val.data())
             self.flip = FlipWindow()
             self.flip.show()
         if val.data() == "Resize":
-            print(val.data())
             self.flip = ResizeWindow()
             self.flip.show()
         if val.data() == "Brightness":
-            print(val.data())
             self.brightness = BrightnessWindow()
             self.brightness.show()
         if val.data() == "Rotation":
-            print(val.data())
             self.rotation = RotationWindow()
             self.rotation.show()
         if val.data() == "Noise":
-            print(val.data())
             self.noise = NoiseWindow()
             self.noise.show()
         if val.data() == "Blurring":
-            print(val.data())
             self.blurring = BlurringWindow()
             self.blurring.show()
         if val.data() == "Crop":
-            print(val.data())
             self.crop = CropWindow()
             self.crop.show()
         if val.data() == "Tagging":
-            print(val.data())
             self.tag = TaggingWindow()
             self.tag.show()
         if val.data() == "Filtering":
-            print(val.data())
             self.filtering = FilteringWindow()
             self.filtering.show()
         if val.data() == "Split":
-            print(val.data())
             self.split = SplitWindow()
             self.split.show()
         if val.data() == "Fast Augmentation":
-            print(val.data())
             self.fastAugmentation = FastAugmentationWindow()
             self.fastAugmentation.show()
 
@@ -1508,9 +1482,19 @@ class SplashScreen(QMainWindow, my_form_SplashScreen):
         Counter += 1
 
 
-files = glob.glob("./images/*") + glob.glob("./cropped/*") + glob.glob("./tagged/*")
-for f in files:
-    os.remove(f)
+folders = [
+    "./images",
+    "./cropped",
+    "./tagged",
+    "./splitData",
+    "./splitData/Test",
+    "./splitData/Train",
+]
+for f in folders:
+    if os.path.isdir(f):
+        shutil.rmtree(f)
+    os.mkdir(f)
+
 
 app = QApplication([])
 w = SplashScreen()
