@@ -89,3 +89,42 @@ class Image:
         if save == True:
             self.img = temp
         return temp
+
+    
+    def grayScale(self):
+        gray = self.img.copy()
+        gray = gray.astype(np.float)
+        gray[:, :, 0] = gray[:, :, 1] = gray[:, :, 2] = 1.5 * np.mean(imgObject, 2)
+        gray[gray > 255] = 255
+        gray = gray.astype(np.uint8)
+        return gray
+
+    def apply_sepia(self):
+        sepia = np.array(self.img, dtype=np.float64)  # converting to float to prevent loss
+        sepia = cv2.transform(
+            sepia,
+            np.matrix(
+                [[0.393, 0.769, 0.189], [0.349, 0.686, 0.168], [0.272, 0.534, 0.869]]
+            ),
+        )  # multipying image with special sepia matrix
+        sepia[np.where(sepia > 255)] = 255  # normalizing values greater than 255 to 255
+        sepia = np.array(sepia, dtype=np.uint8)  # converting back to int
+        return sepia
+
+    def destroy(self):
+        hsv = cv2.cvtColor(self.img, cv2.COLOR_RGB2HSV)
+        lower_red = np.array([10, 10, 10])
+        upper_red = np.array([240, 240, 240])
+        mask = cv2.inRange(hsv, lower_red, upper_red)
+        res = cv2.bitwise_and(self.img, self.img, mask=mask)
+        return res
+
+    def Morphological(self):
+        kernel = np.ones((5, 5), np.uint8)
+        gradient = cv2.morphologyEx(self.img, cv2.MORPH_GRADIENT, kernel)
+        return gradient
+
+    def openning(self):
+        kernel = np.ones((5, 5), np.uint8)
+        openning = cv2.morphologyEx(self.img, cv2.MORPH_OPEN, kernel)
+        return openning

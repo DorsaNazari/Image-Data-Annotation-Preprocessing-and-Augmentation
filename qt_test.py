@@ -667,11 +667,10 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         super(FilteringWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("filtering")
-
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-
+        self.mode = None
         self.pushButton.clicked.connect(self.apply_invert)
         self.pushButton_2.clicked.connect(self.apply_sepia)
         self.pushButton_3.clicked.connect(self.destroy)
@@ -680,17 +679,41 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         self.pushButton_6.clicked.connect(self.grayScale)
         self.pushButton_7.clicked.connect(self.denoise)
         self.pushButton_8.clicked.connect(self.exit)
+        self.pushButton_9.clicked.connect(self.applyToAll)
 
     def exit(self):
         self.close()
 
+    def applyToAll(self):
+        my_list = allImagesInThisDirectory("./images")
+        for img in my_list:
+            if self.mode == "i":
+                ans = cv2.bitwise_not(img)
+            elif self.mode == "g":
+                ans = img.grayScale()
+            elif self.mode == "s":
+                ans = img.apply_sepia()
+            elif self.mode == "d":
+                ans = img.destroy()
+            elif self.mode == "m":
+                ans = img.Morphological()
+            elif self.mode == "o":
+                ans = img.openning()
+            elif self.mode == "n":
+                ans = img.denoise()
+            UploadWindow._count += 1
+            cv2.imwrite(".\images\image" + str(UploadWindow._count) + ".jpg", ans)
+
     def apply_invert(self):
+        self.mode = "i"
+        print(self.mode)
         imgObject = cv2.imread("2.jpg")
         cv2.imwrite("ui.jpg", cv2.bitwise_not(imgObject))
         pixmap = QPixmap("ui.jpg")
         self.label_filtering.setPixmap(pixmap)
 
     def grayScale(self):
+        self.mode = "g"
         imgObject = cv2.imread("2.jpg")
         gray = imgObject.copy()
         gray = gray.astype(np.float)
@@ -702,6 +725,7 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         self.label_filtering.setPixmap(pixmap)
 
     def apply_sepia(self):
+        self.mode = "s"
         img = cv2.imread("2.jpg")
         img = np.array(img, dtype=np.float64)  # converting to float to prevent loss
         img = cv2.transform(
@@ -717,6 +741,7 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         self.label_filtering.setPixmap(pixmap)
 
     def destroy(self):
+        self.mode = "d"
         img = cv2.imread("2.jpg")
         hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
         lower_red = np.array([10, 10, 10])
@@ -728,6 +753,7 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         self.label_filtering.setPixmap(pixmap)
 
     def Morphological(self):
+        self.mode = "m"
         img = cv2.imread("2.jpg", 0)
         kernel = np.ones((5, 5), np.uint8)
         gradient = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
@@ -736,6 +762,7 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         self.label_filtering.setPixmap(pixmap)
 
     def openning(self):
+        self.mose = "o"
         img = cv2.imread("2.jpg", 0)
         kernel = np.ones((5, 5), np.uint8)
         openning = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
@@ -744,6 +771,7 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         self.label_filtering.setPixmap(pixmap)
 
     def denoise(self):
+        self.mode = "n"
         imgObject = Image("2.jpg")
         img = imgObject.denoise()
         cv2.imwrite("ui.jpg", img)

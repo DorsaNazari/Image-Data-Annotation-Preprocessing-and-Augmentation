@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1548</width>
-    <height>789</height>
+    <width>1249</width>
+    <height>801</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,6 +17,9 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QFrame" name="frame">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="styleSheet">
        <string notr="true">QFrame {
 	background-color: rgb(56,58,89);
@@ -123,8 +126,8 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QLabel" name="label_3">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>240</y>
+         <x>10</x>
+         <y>160</y>
          <width>601</width>
          <height>511</height>
         </rect>
@@ -139,8 +142,8 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QLabel" name="label_filtering">
        <property name="geometry">
         <rect>
-         <x>630</x>
-         <y>240</y>
+         <x>620</x>
+         <y>160</y>
          <width>601</width>
          <height>511</height>
         </rect>
@@ -241,7 +244,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QPushButton" name="pushButton_7">
        <property name="geometry">
         <rect>
-         <x>1010</x>
+         <x>1020</x>
          <y>100</y>
          <width>105</width>
          <height>31</height>
@@ -263,8 +266,8 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
       <widget class="QPushButton" name="pushButton_8">
        <property name="geometry">
         <rect>
-         <x>1210</x>
-         <y>10</y>
+         <x>1200</x>
+         <y>20</y>
          <width>20</width>
          <height>20</height>
         </rect>
@@ -284,6 +287,29 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_9">
+       <property name="geometry">
+        <rect>
+         <x>1060</x>
+         <y>690</y>
+         <width>111</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.506, stop:0 rgba(254, 121, 199, 255), stop:1 rgba(170, 85, 255, 255));</string>
+       </property>
+       <property name="text">
+        <string>Apply to all</string>
        </property>
       </widget>
      </widget>
