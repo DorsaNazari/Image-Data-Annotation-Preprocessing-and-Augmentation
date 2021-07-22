@@ -62,7 +62,7 @@ class Image:
 
     def addnoise(self, mode, x=0.05, save=False):
         if mode == "gaussian" or mode == "speckle":
-            gimg = random_noise(self.img, mode=mode, var=x)
+            gimg = random_noise(self.img, mode=mode, var=x * 2)
         elif mode == "s&p" or mode == "pepper" or mode == "salt":
             gimg = random_noise(self.img, mode=mode, amount=x)
         elif mode == "poisson":
@@ -85,12 +85,10 @@ class Image:
 
     def denoise(self, save=False):
         temp = cv2.fastNlMeansDenoisingColored(self.img, None, 10, 10, 7, 15)
-        temp = cv2.medianBlur(temp, 9)
         if save == True:
             self.img = temp
         return temp
 
-    
     def grayScale(self):
         gray = self.img.copy()
         gray = gray.astype(np.float)
@@ -100,7 +98,9 @@ class Image:
         return gray
 
     def apply_sepia(self):
-        sepia = np.array(self.img, dtype=np.float64)  # converting to float to prevent loss
+        sepia = np.array(
+            self.img, dtype=np.float64
+        )  # converting to float to prevent loss
         sepia = cv2.transform(
             sepia,
             np.matrix(
