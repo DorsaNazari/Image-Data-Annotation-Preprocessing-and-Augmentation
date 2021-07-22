@@ -50,7 +50,8 @@
         <string notr="true">color:rgb(254,121,199);</string>
        </property>
        <property name="text">
-        <string>Here is how you split your images when you added them to the dataset</string>
+        <string>Here is how you split your images
+ when you added them to the dataset</string>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
@@ -62,8 +63,8 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>60</x>
-         <y>30</y>
+         <x>30</x>
+         <y>10</y>
          <width>101</width>
          <height>51</height>
         </rect>
@@ -115,14 +116,14 @@ color: rgb(165, 167, 255);</string>
          <x>80</x>
          <y>190</y>
          <width>491</width>
-         <height>41</height>
+         <height>71</height>
         </rect>
        </property>
        <property name="html">
         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; color:#a5a7ff;&quot;&gt;What &lt;/span&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#a5a7ff;&quot;&gt;percentage&lt;/span&gt;&lt;span style=&quot; font-size:14pt; color:#a5a7ff;&quot;&gt; of data you want to use in &lt;/span&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#fe79c7;&quot;&gt;Training&lt;/span&gt;&lt;span style=&quot; font-size:14pt; color:#fe79c7;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:14pt; color:#a5a7ff;&quot;&gt;?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
@@ -130,23 +131,23 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>80</x>
-         <y>150</y>
+         <y>120</y>
          <width>351</width>
-         <height>31</height>
+         <height>71</height>
         </rect>
        </property>
        <property name="html">
         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; color:#a5a7ff;&quot;&gt;Number of data images you create is: &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>440</x>
+         <x>190</x>
          <y>150</y>
          <width>81</width>
          <height>31</height>
@@ -170,7 +171,7 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>580</x>
-         <y>190</y>
+         <y>200</y>
          <width>81</width>
          <height>31</height>
         </rect>
@@ -199,7 +200,7 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>670</x>
-         <y>190</y>
+         <y>200</y>
          <width>75</width>
          <height>31</height>
         </rect>
@@ -222,7 +223,7 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>650</x>
-         <y>220</y>
+         <y>240</y>
          <width>201</width>
          <height>31</height>
         </rect>
@@ -244,8 +245,8 @@ p, li { white-space: pre-wrap; }
       <widget class="QLabel" name="label_4">
        <property name="geometry">
         <rect>
-         <x>80</x>
-         <y>240</y>
+         <x>90</x>
+         <y>290</y>
          <width>561</width>
          <height>71</height>
         </rect>
