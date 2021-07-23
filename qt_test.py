@@ -60,6 +60,7 @@ class UploadWindow(QMainWindow, my_form_upload):
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.pushButton_4.clicked.connect(self.exit)
+        self.setFixedSize(676, 276)
 
     def exit(self):
         self.close()
@@ -110,6 +111,7 @@ class FlipWindow(QMainWindow, my_form_flip):
         self.pushButton.clicked.connect(self.state_changed)
         self.pushButton_4.clicked.connect(self.exit)
         self.pushButton_5.clicked.connect(self.applyToAll)
+        self.setFixedSize(1045, 700)
 
     def exit(self):
         self.close()
@@ -232,6 +234,7 @@ class ResizeWindow(QMainWindow, my_form_resize):
         self.pushButton.clicked.connect(self.state_changed)
         self.pushButton_4.clicked.connect(self.exit)
         self.pushButton_5.clicked.connect(self.applyToAll)
+        self.setFixedSize(1000, 700)
 
     def exit(self):
         self.close()
@@ -322,6 +325,7 @@ class BrightnessWindow(QMainWindow, my_form_brightness):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.pushButton_4.clicked.connect(self.exit)
         self.pushButton_5.clicked.connect(self.applyToAll)
+        self.setFixedSize(666, 828)
 
     def applyToAll(self):
         my_list = allImagesInThisDirectory("./images")
@@ -389,6 +393,7 @@ class RotationWindow(QMainWindow, my_form_rotation):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.pushButton_7.clicked.connect(self.exit)
         self.pushButton_8.clicked.connect(self.applyToAll)
+        self.setFixedSize(666, 828)
 
     def applyToAll(self):
         my_list = allImagesInThisDirectory("./images")
@@ -476,6 +481,7 @@ class NoiseWindow(QMainWindow, my_form_noise):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.pushButton_7.clicked.connect(self.exit)
         self.pushButton_8.clicked.connect(self.applyToAll)
+        self.setFixedSize(666, 828)
 
     def applyToAll(self):
         my_list = allImagesInThisDirectory("./images")
@@ -576,6 +582,7 @@ class BlurringWindow(QMainWindow, my_form_blurring):
         self.pushButton_3.clicked.connect(self.bilateral)
         self.pushButton_4.clicked.connect(self.exit)
         self.pushButton_5.clicked.connect(self.applyToAll)
+        self.setFixedSize(666, 828)
 
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
@@ -674,6 +681,7 @@ class CropWindow(QMainWindow, my_form_crop):
         self.pushButton.clicked.connect(self.apply)
         self.imagename = "1"
         self.pushButton_4.clicked.connect(self.exit)
+        self.setFixedSize(1269, 827)
 
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
@@ -785,6 +793,7 @@ class TaggingWindow(QMainWindow, my_form_tag):
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setFixedSize(1269, 827)
 
     def prev(self):
         self.imagename = str(np.clip(int(self.imagename), 2, None) - 1)
@@ -795,24 +804,7 @@ class TaggingWindow(QMainWindow, my_form_tag):
             pixmap = QPixmap("./tagged/taggedimage" + self.imagename + ".jpg")
         elif os.path.isfile("./tagged/taggedimage" + self.imagename + ".jpg"):
             pixmap = QPixmap("./tagged/taggedimage" + self.imagename + ".jpg")
-            # convert image file into pixmap
-            self.pixmap_image = QtGui.QPixmap(self.filename)
 
-            # create painter instance with pixmap
-            self.painterInstance = QtGui.QPainter(self.pixmap_image)
-
-            # set rectangle color and thickness
-            self.penRectangle = QtGui.QPen(QtCore.Qt.red)
-            self.penRectangle.setWidth(3)
-
-            # draw rectangle on painter
-            self.painterInstance.setPen(self.penRectangle)
-            self.painterInstance.drawRect(xPos,yPos,xLen,yLen)
-
-            # set pixmap onto the label widget
-            self.ui.label_imageDisplay.setPixmap(self.pixmap_image)
-            self.ui.label_imageDisplay.show()
-            
         pixmap = pixmap.scaled(600, 450)
         self.label_2.setPixmap(pixmap)
         self.lineEdit.hide()
@@ -962,6 +954,7 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         self.pushButton_7.clicked.connect(self.denoise)
         self.pushButton_8.clicked.connect(self.exit)
         self.pushButton_9.clicked.connect(self.applyToAll)
+        self.setFixedSize(1249, 801)
 
     def exit(self):
         self.close()
@@ -1002,8 +995,6 @@ class FilteringWindow(QMainWindow, my_form_filtering):
                     ymin = min(y0, yp0)
                     xmax = max(x0, xp0)
                     ymax = max(y0, yp0)
-                    cv2.rectangle(ans, (xmin, ymin), (xmax, ymax), (255, 0, 255), 2)
-                    cv2.imshow("ridam tu ap", ans)
                     file1 = open(
                         "./tagged/ref_pointsOfimage"
                         + str(UploadWindow._count)
@@ -1039,7 +1030,7 @@ class FilteringWindow(QMainWindow, my_form_filtering):
         gray[:, :, 0] = gray[:, :, 1] = gray[:, :, 2] = 1.5 * np.mean(imgObject, 2)
         gray[gray > 255] = 255
         gray = gray.astype(np.uint8)
-        cv2.imwrite("ui.jpg", cv2.bitwise_not(gray))
+        cv2.imwrite("ui.jpg", (gray))
         pixmap = QPixmap("ui.jpg")
         self.label_filtering.setPixmap(pixmap)
 
@@ -1108,6 +1099,7 @@ class SplitWindow(QMainWindow, my_form_split):
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setFixedSize(891, 431)
 
         imagePath = ".\images"
         list_of_images_directory = allImagesInThisDirectory2(imagePath)
@@ -1163,6 +1155,7 @@ class FastAugmentationWindow(QMainWindow, my_form_fast):
         super(FastAugmentationWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("fast mode")
+        self.setFixedSize(666, 828)
 
         # remove title bar
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
@@ -1285,6 +1278,7 @@ class MainWindow(QMainWindow, my_form_main):
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.resize(700, 500)
+        self.setFixedSize(800, 529)
 
         ##tree
         treeView = QTreeView()
