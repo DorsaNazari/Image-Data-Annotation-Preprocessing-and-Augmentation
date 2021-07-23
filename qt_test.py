@@ -1220,10 +1220,10 @@ class FastAugmentationWindow(QMainWindow, my_form_fast):
                         image.img = cv2.flip(image.img, x)
                     image.addnoise(
                         self.comboBox.currentText(),
-                        np.random.randint(0, 25) / 100,
+                        np.random.randint(0, 20) / 100,
                         True,
                     )
-                    rd = np.random.randint(15)
+                    rd = np.random.randint(10)
                     if rd % 2 == 0:
                         rd += 1
                     if self.comboBox_2.currentText() == "gaussian":
